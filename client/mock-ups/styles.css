@@ -1,0 +1,30 @@
+:root[data-theme="light"] {
+  --text: #090706;
+  --background: #f7f4f3;
+  --primary: #11497e;
+  --secondary: #cfd0cd;
+  --accent: #3fa1d9;
+}
+:root[data-theme="dark"] {
+  --text: #f9f7f6;
+  --background: #0c0908;
+  --primary: #81b9ee;
+  --secondary: #31322f;
+  --accent: #2687c0;
+}
+/* https://www.realtimecolors.com/?colors=090706-f7f4f3-11497e-cfd0cd-3fa1d9&fonts=Poppins-Poppins */
+
+body {
+    background: var(--background);
+    color: var(--text);
+}
+
+.navbar {
+    background: var(--primary);
+    color: var(--background);
+}
+
+#page {
+    display: flex;
+}
+
