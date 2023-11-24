@@ -1,0 +1,16 @@
+{
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "python.formatting.provider": "none",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:nea-project}/server/lms.db",
+            "name": "LMS",
+            "group": "LMS"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
