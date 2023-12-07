@@ -5,6 +5,7 @@ app = Flask(__name__, static_folder='client/build', static_url_path='/')
 
 # serve react app
 
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
