@@ -106,9 +106,14 @@ nav {
 
 #page {
     background-color: var(--background);
+    /* POPE ON A SKATEBOARD!! */
+    /* background-image: url("pope.png"); */
+    /* background: linear-gradient(0deg, rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0.50)), url("pope.png"); */
+    /* background-size: 10rem; */
+    /* background-repeat: repeat; */
+
     display: flex;
     flex-direction: column;
-    margin: 0;
     padding: 1rem;
     align-items: center;
 
@@ -125,6 +130,8 @@ main {
     border: solid var(--primary) 1px;
     border-radius: 0.5rem;
     background-color: var(--secondary);
+    max-width: 400px;
+    margin: auto;
 }
 
 .form div {
@@ -182,6 +189,96 @@ textarea:focus {
     background-color: rgba(79, 148, 213, 0.1);
     border-radius: 10px;
 
+}
+
+#display-objects {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.list-object-info {
+    display: flex;
+    flex-direction: column;
+}
+.list-object {
+    display: flex;
+    flex-direction: row;
+    max-height: 200px;
+    margin: 0;
+    padding: 0.5rem;
+    flex: 1 1 45%;
+
+}
+
+.list-object-pic {
+    /* max-width: 100px; */
+    max-height: 7.5rem;
+    width: auto;
+}
+
+.list-object * {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.list-object-name {
+    padding: 0;
+    margin: 0
+}
+
+.list-object-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.list-object-actions-icons {
+    font-size: inherit*2 !important;
+    padding: 0;
+}
+
+#object-filters {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+
+#pages-in-category {
+    font-size: 1.5rem;
+}
+
+
+#pages-in-category a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+#pages-in-category a:visited {
+    color: var(--primary)
+}
+
+#pages-in-category a:hover {
+    color: var(--text);
+}
+
+hr {
+    border-color: var(--primary);
+    width: 100%;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+}
+
+footer * {
+    flex: 1 1 100%;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');

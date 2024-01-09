@@ -1,4 +1,9 @@
 .material-symbols-outlined {
     font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40;
+    /* font-size: 3rem !important; */
+}
+
+.logo-icon {
     font-size: 3rem !important;
+
 }
