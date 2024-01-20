@@ -1,6 +1,7 @@
 # python crap
-venv/
+backend/venv/
 .DS_Store
-.flaskenv
+backend/.flaskenv
 .prettierc
-database/
+backend/database/
+backend/__pycache__
