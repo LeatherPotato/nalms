@@ -202,6 +202,13 @@ textarea:focus {
     display: flex;
     flex-direction: column;
 }
+
+.list-object-info span {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
+
 .list-object {
     display: flex;
     flex-direction: row;
@@ -254,9 +261,11 @@ textarea:focus {
 }
 
 
-#pages-in-category a {
+a {
     color: var(--primary);
     text-decoration: none;
+    margin: 0;
+    padding: 0;
 }
 
 #pages-in-category a:visited {
