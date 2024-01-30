@@ -3,5 +3,5 @@ backend/venv/
 .DS_Store
 backend/.flaskenv
 .prettierc
-backend/database/
+# backend/database/
 backend/__pycache__
