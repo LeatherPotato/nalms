@@ -7,9 +7,10 @@ def convert_isbn(isbn10):
     hyphen = 0
     for n in range(len(isbn10_list)):
         if not isbn10_list[n] == '-':
-            checksum += int(isbn10_list[n]) * (((n-hyphen)%2)*2 + 1)
+            checksum += int(isbn10_list[n]) * (((n-hyphen)%2)*2 + 1) # this last bit alternates between a 1 and a 3
         else:
             hyphen += 1
+    # sums up all the numbers and multiplies them by an alternating 1 and 3, and keeps track of hyphens to remove them from the running tally of what number to multiply by next
     checksum = (10 - checksum%10)%10
     isbn10_list.append(str(checksum))
     return ''.join(isbn10_list)
