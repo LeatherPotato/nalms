@@ -1,14 +1,9 @@
 from flask import Flask, send_from_directory
 import os
-import sqlite3
 
 app = Flask(__name__, static_folder='client/build', static_url_path='/')
 
-con = sqlite3.connect('database/lms.db')
-cur = con.cursor()
-
 # serve react app
-
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
