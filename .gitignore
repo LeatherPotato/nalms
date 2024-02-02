@@ -5,3 +5,4 @@ backend/.flaskenv
 .prettierc
 # backend/database/
 backend/__pycache__
+.vscode/
