@@ -2,4 +2,4 @@
 
 SERVE_URL = ''
 API_URL = ''
-DATABASE_PATH = ''
+DATABASE_PATH = '/Users/thesussywussy/Documents/code/web-stuff/nea-project/server/lms.dbs'
