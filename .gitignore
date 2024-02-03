@@ -6,3 +6,4 @@ backend/.flaskenv
 # backend/database/
 backend/__pycache__
 .vscode/
+.venv/

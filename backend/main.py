@@ -31,15 +31,6 @@ def hello():
 def api_home():
     return 'welcome to the NALMS api'
 
-@app.route('/api/')
-def r_name():
-    pass
-
-@app.route('/api/')
-def r_name():
-    pass
-
-
 
 if __name__ == '__main__':
     # flask app
