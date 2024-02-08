@@ -1,10 +1,10 @@
-import queue
-import sqlite3
-
 class DatabaseQueue:
+    import sqlite3
+    import queue
+
     def __init__(self, db_path):
-        self.db_queue = queue.Queue()
-        self.con = sqlite3.connect(db_path)
+        self.db_queue = self.queue.Queue()
+        self.con = self.sqlite3.connect(db_path)
         # print(con.total_changes)
         self.cur = self.con.cursor()
 
@@ -33,6 +33,12 @@ class DatabaseQueue:
         ...
 
     def delete_book(self):
+        ...
+    
+    def checkout_book(self):
+        ...
+    
+    def availability_book(self):
         ...
 
     def create_author(self):

@@ -3,7 +3,7 @@ import os
 import variables
 from db import DatabaseQueue
 
-app = Flask(__name__, static_folder='client/build', static_url_path='build/')
+app = Flask(__name__, static_folder=variables.STATIC_FOLDER)
 database_queue = DatabaseQueue(variables.DATABASE_PATH)
 
 # serve react app
