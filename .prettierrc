@@ -1,7 +1,4 @@
 {
-    "tabWidth": 4,
-    "useTabs": false,
-    "[html]": {
-        "editor.defaultFormatter": "vscode.html-language-features"
-    }
+  "tabWidth": 2,
+  "useTabs": false
 }

@@ -1,18 +1,25 @@
-# class Book:
-#     isbnlib = __import__('isbnlib')
-#     def __init__(self, isbn13):
-#         self.book = self.isbnlib(isbn13)
-
-#         self.title = ...
-#         self.genre = ...
-#         self.publication_date = ...
-#         self.publisher_name = ...
-#         self.publisher_isbn = ...
-#         self.description = ...
-#         self.cover_image = ...
+class Book:
+    import isbntools.app as isbnapi
+    def __init__(self, isbn13):
+        book_meta = self.isbnapi.meta(isbn13)
+        self.title = book_meta['Title']
+        self.genre = ...
+        self.publication_date = book_meta['Year']
+        self.publisher_name = book_meta['Publisher']
+        self.publisher_id = 0 # will set to 0 temporarily while the publisher is created
+        self.description = self.isbnapi.desc(isbn13)
+        self.cover_image = self.isbnapi.cover(isbn13)['thumbnail']
     
-import isbnlib
+from isbntools.app import *
+# got from this stackoverflow thread https://stackoverflow.com/a/26360917
+# created error where it did not have a module called pkg resources, so i installed python setuptools
 
 isbn = '9780486602554'
-book = isbnlib.meta(isbn, service='goob')
-print(book)
+
+# services i can use: [wcat|goob|openl|isbndb|merge]
+meta_dict = meta(isbn)
+
+print(meta_dict)
+print(cover(isbn))
+print(desc(isbn))
+
