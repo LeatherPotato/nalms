@@ -14,11 +14,11 @@ from isbntools.app import *
 # got from this stackoverflow thread https://stackoverflow.com/a/26360917
 # created error where it did not have a module called pkg resources, so i installed python setuptools
 
-isbn = '9780486602554'
+# isbn = '9780486602554'
 
-# services i can use: [wcat|goob|openl|isbndb|merge]
-meta_dict = meta(isbn)
+# # services i can use: [wcat|goob|openl|isbndb|merge]
+# meta_dict = meta(isbn)
 
-print(meta_dict)
-print(cover(isbn))
-print(desc(isbn))
+# print(meta_dict)
+# print(cover(isbn))
+# print(desc(isbn))
