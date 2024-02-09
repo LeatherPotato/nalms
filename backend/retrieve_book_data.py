@@ -22,4 +22,3 @@ meta_dict = meta(isbn)
 print(meta_dict)
 print(cover(isbn))
 print(desc(isbn))
-
