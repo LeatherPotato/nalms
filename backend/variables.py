@@ -4,4 +4,4 @@ STATIC_FOLDER = '/Users/thesussywussy/Documents/code/web-stuff/nea-project/backe
 
 SERVE_URL = ''
 API_URL = ''
-DATABASE_PATH = '/Users/thesussywussy/Documents/code/web-stuff/nea-project/server/lms.dbs'
+DATABASE_PATH = '/Users/thesussywussy/Documents/code/web-stuff/nea-project/server/lms.db'

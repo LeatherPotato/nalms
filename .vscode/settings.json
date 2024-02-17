@@ -8,8 +8,7 @@
             "previewLimit": 50,
             "driver": "SQLite",
             "database": "${workspaceFolder:nea-project}/server/lms.db",
-            "name": "LMS",
-            "group": "LMS"
+            "name": "LMS"
         }
     ],
     "sqltools.useNodeRuntime": true

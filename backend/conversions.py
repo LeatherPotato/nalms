@@ -18,5 +18,6 @@ def convert_isbn(isbn10):
         checksum = (10 - checksum%10)%10
         isbn10_list.append(str(checksum))
         isbn13 = ''.join(isbn10_list)
+        return isbn13
     else:
         return 'ERR'

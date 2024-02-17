@@ -12,7 +12,10 @@ class Book:
         self.publisher_name = book_meta['Publisher']
         self.publisher_id = 0 # will set to 0 until real value is found in db.py
         self.description = self.isbnapi.desc(isbn13)
-        self.cover_image = self.isbnapi.cover(isbn13)['thumbnail']
+        self.cover_image = self.isbnapi.cover(isbn13)
+        if self.cover_image == {}:
+            print('no cover image')
+            self.cover_image = 'NONE'
     
 # from isbntools.app import *
 # got from this stackoverflow thread https://stackoverflow.com/a/26360917
