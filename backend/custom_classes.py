@@ -32,19 +32,10 @@ class Book:
         
 
 class User:
-    def __init__(fn : str, ln : str, pw : str, sy : int, un : str):
-        username = un
-        password = pw
-        firstName = fn
-        lastName = ln
-        schoolYear = sy
-
-    def inputs_are_sanitary(self):
-        return ...
-
-    def sanitize_inputs(self):
-        ...
-    
-class Librarian:
-    def __init__(self) -> None:
-        pass
+    def __init__(input_fname : str, input_lname : str, input_password : str, input_schoolYear : int, input_username : str):
+        username = input_username
+        password = input_password
+        firstName = input_fname
+        lastName = input_lname
+        schoolYear = input_schoolYear
+        permissions = '0000'
