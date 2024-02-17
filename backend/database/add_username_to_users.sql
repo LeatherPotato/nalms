@@ -6,6 +6,5 @@ CREATE TABLE IF NOT EXISTS USERS (
     Schoolyear INTEGER,
     FirstName TEXT,
     LastName TEXT,
-    BorrowedBooks TEXT,
     Password TEXT
 );

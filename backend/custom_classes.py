@@ -44,3 +44,7 @@ class User:
 
     def sanitize_inputs(self):
         ...
+    
+class Librarian:
+    def __init__(self) -> None:
+        pass
