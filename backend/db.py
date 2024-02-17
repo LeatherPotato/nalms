@@ -13,8 +13,7 @@ class DatabaseQueue:
 
     def read_data(self, select_fields: list, from_field: str, where_fields: list):
         # DONE: upgrade to add multiple select fields and multiple where fields.
-        self.cur.execute(f"SELECT {",".join(select_fields)} FROM {
-                         from_field} WHERE {",".join(where_fields)}")
+        self.cur.execute(f"SELECT {",".join(select_fields)} FROM {from_field} WHERE {",".join(where_fields)}")
         rows = self.cur.fetchall()
         return rows
 
