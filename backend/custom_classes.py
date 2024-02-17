@@ -32,10 +32,11 @@ class Book:
         
 
 class User:
-    def __init__(input_fname : str, input_lname : str, input_password : str, input_schoolYear : int, input_username : str):
+    def __init__(input_fname : str, input_lname : str, input_password : str, input_schoolYear : int, input_username : str, perms: str):
         username = input_username
         password = input_password
         firstName = input_fname
         lastName = input_lname
         schoolYear = input_schoolYear
-        permissions = '0000'
+        # users have the following permissions: ADMIN (editing/creating/deleting other users), CATALOGUE MANAGER (create/remove books), LIBRARIAN (check in/out books, manage hold requests), MEMBER (create hold requests)
+        permissions = perms
