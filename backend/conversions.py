@@ -1,4 +1,5 @@
 import isbnlib
+import hashlib
 
 def convert_isbn(isbn10):
     if isbnlib.is_isbn10(isbn10):
