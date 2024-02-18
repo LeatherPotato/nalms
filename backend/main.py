@@ -31,6 +31,58 @@ def hello():
 def api_home():
     return 'welcome to the NALMS api'
 
+# user handling
+
+@app.route('/api/create_user/')
+def create_user():
+    return ...
+
+@app.route('/api/edit_user/')
+def edit_user():
+    return ...
+
+@app.route('/api/change_password/')
+def change_password():
+    return ...
+
+@app.route('/api/change_username/')
+def change_username():
+    return ...
+
+@app.route('/api/login')
+def login():
+    return ...
+
+# catalogue handling 
+
+@app.route('/api/create_book/')
+def create_book():
+    return ...
+
+@app.route('/api/edit_book/')
+def edit_book():
+    return ...
+
+# circulation handling
+
+@app.route('/api/creat_hold_request/')
+def creat_hold_request():
+    return ...
+
+@app.route('/api/toggle_hold_request/')
+def toggle_hold_request():
+    return ...
+
+# library handling
+
+@app.route('/api/send_notification/')
+def send_notification():
+    return ...
+
+@app.route('/api/view_notification/')
+def view_notification():
+    return ...
+
 
 if __name__ == '__main__':
     # flask app

@@ -17,6 +17,21 @@ class Database:
 
     def delete_row(self, table: str, conditions: list):
         self.cur.execute(f"DELETE FROM ? WHERE {",".join(conditions)}", (table,))
+    
+    def check_user_permissions(self, userId, action : int):
+        creatorPerms = self.cur.execute("SELECT Permissions FROM USERS WHERE UserId=?", (userId,)).fetchone()
+        hasRequiredPerms = False
+        if action==4 and creatorPerms[3] == "1":
+            hasRequiredPerms = True
+        else:
+            for n in range(action-1, 3):
+                if creatorPerms[n] == "1":
+                    hasRequiredPerms = True
+        return hasRequiredPerms
+    
+    # TODO add check_user_perms to all functions. do all of the validation reguarding this in database code, to keep the delivery code clean of database stuff.
+
+
 
     def create_book(self, Book: BookClass):
         bookDataPk = self.cur.execute("SELECT BookDataId FROM BOOK_DATA WHERE ISBN=?", (Book.isbn,)).fetchone()
