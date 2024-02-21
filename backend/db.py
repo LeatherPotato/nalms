@@ -38,10 +38,15 @@ class Database:
         return bookId
 
     def borrow_book(self, userId, bookId):
-        time = self.datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
-        self.cur.execute("INSERT OR REPLACE INTO BORROWS (UserId, BookId, DateBorrowed) VALUES (?, ?, ?)", (userId, bookId, time))
-        self.cur.execute("UPDATE BOOKS SET Availability=0 WHERE BookId=?", (bookId,))
-        self.con.commit()
+        availability = self.cur.execute("SELECT Availability FROM BOOKS WHERE BookId=?", (bookId,))
+        if availability == 1:
+            time = self.datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
+            self.cur.execute("INSERT OR REPLACE INTO BORROWS (UserId, BookId, DateBorrowed) VALUES (?, ?, ?)", (userId, bookId, time))
+            self.cur.execute("UPDATE BOOKS SET Availability=0 WHERE BookId=?", (bookId,))
+            self.con.commit()
+            return "SUCCESS BOOK BORROWED"
+        else:
+            return "ERR BOOK NOT BORROWED"
     
     def return_book(self, userId, bookId):
         time = self.datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
