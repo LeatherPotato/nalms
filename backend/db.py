@@ -19,17 +19,10 @@ class Database:
         self.cur.execute(f"DELETE FROM ? WHERE {",".join(conditions)}", (table,))
     
     def check_user_permissions(self, userId, action : int):
-        creatorPerms = self.cur.execute("SELECT Permissions FROM USERS WHERE UserId=?", (userId,)).fetchone()
-        hasRequiredPerms = False
-        if action==4 and creatorPerms[3] == "1":
-            hasRequiredPerms = True
-        else:
-            for n in range(action-1, 3):
-                if creatorPerms[n] == "1":
-                    hasRequiredPerms = True
-        return hasRequiredPerms
+        creatorPerms = self.cur.execute("SELECT Permissions FROM USERS WHERE UserId=?", (userId,)).fetchone()[0]
+        return action <= int(creatorPerms, 2)
     
-    # TODO add check_user_perms to all functions. do all of the validation reguarding this in database code, to keep the delivery code clean of database stuff.
+    # TODO add check_user_perms to all functions. do all of the validation reguarding this in the flask code.
 
 
 
@@ -40,24 +33,25 @@ class Database:
             Book.genre_id = self.create_genre(Book.genre_name)
             Book.publisher_id = self.create_publisher(Book.publisher_name)
             bookDataPk = self.cur.execute("INSERT INTO BOOK_DATA (ISBN, Title, AuthorId, GenreId, PublicationDate, PublisherId, Description, CoverImage) VALUES(?,?,?,?,?,?,?,?) RETURNING (BookDataId)", (Book.isbn, Book.title, Book.author_id, Book.genre_id, Book.publication_date, Book.publisher_id, Book.description, Book.cover_image)).fetchone()[0]
-        bookId = self.cur.execute("INSERT INTO BOOKS (Availability, BookDataIsbn) VALUES (0, ?) RETURNING (BookId)", (bookDataPk[0],)).fetchone()
+        bookId = self.cur.execute("INSERT INTO BOOKS (Availability, BookDataIsbn) VALUES (1, ?) RETURNING (BookId)", (bookDataPk[0],)).fetchone()
         self.con.commit()
         return bookId
 
     def borrow_book(self, userId, bookId):
         time = self.datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
         self.cur.execute("INSERT OR REPLACE INTO BORROWS (UserId, BookId, DateBorrowed) VALUES (?, ?, ?)", (userId, bookId, time))
-        self.cur.execute("UPDATE BOOKS SET Availability=1 WHERE BookId=?", (bookId))
+        self.cur.execute("UPDATE BOOKS SET Availability=0 WHERE BookId=?", (bookId,))
         self.con.commit()
     
     def return_book(self, userId, bookId):
         time = self.datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
-        self.cur.execute("UPDATE BORROWS SET DateReturned=? WHERE UserId=?, BookId=?", (time, userId, bookId))
-        self.cur.execute("UPDATE BOOKS SET Availability=0 WHERE BookId=?", (bookId))
+        self.cur.execute("UPDATE BORROWS SET DateReturned=? WHERE UserId=? and BookId=?", (time, userId, bookId))
+        self.cur.execute("UPDATE BOOKS SET Availability=1 WHERE BookId=?", (bookId,))
         self.con.commit()
 
-    def availability_book(self):
-        availability = self.cur.execute("SELECT FROM WHERE")
+    def availability_book(self, bookId):
+        availability = self.cur.execute("SELECT Availability FROM BOOKS WHERE BookId=?", (bookId,)).fetchone()[0]
+        return availability
 
     def create_genre(self, genreName: str):
         genreId = self.cur.execute("SELECT GenreId FROM GENRES WHERE GenreName=?", (genreName,)).fetchone()
@@ -68,6 +62,7 @@ class Database:
 
     def edit_genre(self, genreName: str, genreId : int):
         self.cur.execute("UPDATE GENRES SET GenreName=? WHERE GenreId=?", (genreName, genreId))
+        self.con.commit()
 
     def create_author(self, authorName):
         authorId = self.cur.execute("SELECT AuthorId FROM AUTHORS WHERE AuthorName=?", (authorName,)).fetchone()
@@ -76,6 +71,10 @@ class Database:
         self.con.commit()
         return authorId[0]
 
+    def edit_author(self, authorName: str, authorId : int):
+        self.cur.execute("UPDATE AUTHORS SET AuthorName=? WHERE AuthorId=?", (authorName, authorId))
+        self.con.commit()
+
     def create_publisher(self, publisherName):
         if publisherName == '':
             return 0
@@ -83,31 +82,25 @@ class Database:
             publisherId = self.cur.execute("INSERT INTO PUBLISHERS (PublisherName) VALUES (?)", (publisherName,)).fetchone()[0]
             self.con.commit()
             return publisherId
+        
+    def edit_publisher(self, publisherName: str, publisherId : int):
+        self.cur.execute("UPDATE PUBLISHERS SET PublisherName=? WHERE PublisherId=?", (publisherName, publisherId))
+        self.con.commit()
 
-    def create_user(self, User: UserClass, creatorUserId : int):
-        creatorPerms = self.cur.execute("SELECT Permissions FROM USERS WHERE UserId=?", (creatorUserId,)).fetchone()
-        if creatorPerms == None:
-            return "ERR"
-        else:
-            if creatorPerms[0][0] == '1':
-                userId = self.cur.execute("INSERT INTO USERS (Username, Schoolyear, FirstName, LastName, Password, Permissions) VALUES (?, ?, ?, ?, ?, ?) RETURNING UserId", (User.username, User.schoolYear, User.firstName, User.lastName, User.password, User.permissions)).fetchone()[0]
-                self.con.commit()
-                return userId
-            
-    def edit_user(self, User: UserClass, userId, editorId : int):
-        if editorId == userId:
-            # users can edit themselves, except for the permissions and username fields
-            self.cur.execute("UPDATE USERS SET Schoolyear=?, FirstName=?, LastName=?, Password=? WHERE UserId=?", (User.schoolYear, User.firstName, User.lastName, User.password, userId))
+    def create_user(self, User: UserClass):
+        # check user email is unique
+        retrievedUsername = self.cur.execute("SELECT userId FROM USERS WHERE Email=?", (User.email,)).fetchone()
+        retrievedEmail = self.cur.execute("SELECT userId FROM USERS WHERE Username=?", (User.username,)).fetchone()
+        if retrievedUsername == None and retrievedEmail == None:
+            userId = self.cur.execute("INSERT OR IGNORE INTO USERS (Username, Schoolyear, FirstName, LastName, Password, Permissions, email) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING UserId", (User.username, User.schoolYear, User.firstName, User.lastName, User.password, User.permissions, User.email)).fetchone()[0]
             self.con.commit()
+            return userId
         else:
-            creatorPerms = self.cur.execute("SELECT Permissions FROM USERS WHERE UserId=?", (editorId,)).fetchone()
-            if creatorPerms == None:
-                return "ERR"
-            else:
-                if creatorPerms[0][0] == '1':
-                    # the difference here is that this one allows admins to edit user permissions, but they still cannot change usernames and passwords
-                    self.cur.execute("UPDATE USERS SET Schoolyear=?, FirstName=?, LastName=?, Permissions=? WHERE UserId=?", (User.schoolYear, User.firstName, User.lastName, User.password, userId))
-                    self.con.commit()
+            return "EMAIL/USERNAME TAKEN"
+            
+    def edit_user(self, User: UserClass, userId):
+        self.cur.execute("UPDATE USERS SET Schoolyear=?, FirstName=?, LastName=? WHERE UserId=?", (User.schoolYear, User.firstName, User.lastName, userId))
+        self.con.commit()
 
     def check_user_password(self, username, inputPassword):
         retrievedPassword = self.cur.execute("SELECT Password FROM USERS WHERE Username=?", (username,)).fetchone()[0]
@@ -119,10 +112,11 @@ class Database:
         self.con.commit()
     
     def update_username(self, newUsername, userId):
-        retrievedUsername = self.cur.execute("SELECT userId FROM USERS WHERE Username=", (newUsername,)).fetchone()
+        retrievedUsername = self.cur.execute("SELECT userId FROM USERS WHERE Username=?", (newUsername,)).fetchone()
         if retrievedUsername == None:
             self.cur.execute("UPDATE USERS SET Username=? WHERE UserId=?", (newUsername, userId))
             self.con.commit()
+            return "DONE"
         else:
             return "USERNAME_TAKEN"
             
@@ -144,5 +138,5 @@ class Database:
         self.con.commit()
 
     def edit_hold_request(self, bookId, userId, status):
-        self.cur.execute("UPDATE HOLDS SET Status=? WHERE UserId=?, BookId=?", (status, userId, bookId))
+        self.cur.execute("UPDATE HOLDS SET Status=? WHERE UserId=? AND BookId=?", (status, userId, bookId))
         self.con.commit
