@@ -1,9 +1,9 @@
 import isbnlib
 import hashlib
 
-def convert_isbn(isbn10):
-    if isbnlib.is_isbn10(isbn10):
-        isbn10_list = list(isbn10)[:-1] 
+def convert_isbn(inputISBN):
+    if isbnlib.is_isbn10(inputISBN):
+        isbn10_list = list(inputISBN)[:-1] 
         # converts isbn into list, then removes the checksum which will be added at the end
         isbn10_list = ['9', '7', '8', '-'] + isbn10_list
         # adds isbn-13 prefix number
@@ -19,5 +19,11 @@ def convert_isbn(isbn10):
         isbn10_list.append(str(checksum))
         isbn13 = ''.join(isbn10_list)
         return isbn13
+    elif isbnlib.is_isbn13(inputISBN):
+        return inputISBN
     else:
-        return 'ERR'
+        return None
+
+def hash_password(password):
+    hashedPassword = hashlib.md5(password.encode()).hexdigest()
+    return hashedPassword

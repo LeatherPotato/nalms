@@ -41,3 +41,27 @@ class User:
         # users have the following permissions: ADMIN (editing/creating/deleting other users), CATALOGUE MANAGER (create/remove books), LIBRARIAN (check in/out books, manage hold requests), MEMBER (create hold requests)
         self.permissions = perms
         self.email = email
+
+class BookConditions:
+    def __init__(self , isbn = -1, title = '', availability = -1, genreId = -1, sortBy = None, ascending = True):
+        self.isbn = isbn
+        self.title = title + ('%s' if not title == '' else '')
+        self.availability = availability
+        self.genreId = genreId
+        self.sortBy = sortBy
+        self.ascending = ascending
+    
+    
+    genreId = -1
+    sortBy = None
+    ascending = True
+
+class UserConditions:
+    def __init__(self, schoolYear = -1, firstName = '', lastName = '', username='', sortBy = None, ascending = True):
+        self.schoolYear = schoolYear
+        self.firstName = firstName + ('%s' if not firstName == '' else '')
+        self.lastName = lastName + ('%s' if not lastName == '' else '')
+        self.username = username + ('%s' if not username == '' else '')
+        self.sortBy = sortBy
+        self.ascending = ascending
+
