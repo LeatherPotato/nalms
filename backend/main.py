@@ -104,7 +104,7 @@ def login():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_user/')
+@app.route('/api/get_user/', methods=["GET", "POST"])
 def get_user():
     if request.is_json:
         data = request.data
@@ -112,7 +112,7 @@ def get_user():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_users/')
+@app.route('/api/get_users/', methods=["GET", "POST"])
 def get_users():
     if request.is_json:
         data = request.data
@@ -127,7 +127,7 @@ def get_users():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/send_notification/')
+@app.route('/api/send_notification/', methods=["GET", "POST"])
 def send_notification():
     if request.is_json:
         data = request.data
@@ -135,7 +135,7 @@ def send_notification():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_notifications')
+@app.route('/api/get_notifications/', methods=["GET", "POST"])
 def get_notification():
     if request.is_json:
         data = request.data
@@ -143,7 +143,7 @@ def get_notification():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/read_notification/')
+@app.route('/api/read_notification/', methods=["GET", "POST"])
 def read_notification():
     if request.is_json:
         data = request.data
@@ -182,7 +182,7 @@ def delete_book():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_book/')
+@app.route('/api/get_book/', methods=["GET", "POST"])
 def get_book():
     if request.is_json:
         data = request.data
@@ -190,7 +190,7 @@ def get_book():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_books/')
+@app.route('/api/get_books/', methods=["GET", "POST"])
 def get_books():
     if request.is_json:
         data = request.data
@@ -207,7 +207,7 @@ def get_books():
 
 # circulation handling
 
-@app.route('api/borrow_book/', methods=['GET', 'POST'])
+@app.route('/api/borrow_book/', methods=['GET', 'POST'])
 def borrow_book():
     if request.is_json:
         data = request.data
@@ -224,7 +224,7 @@ def borrow_book():
     else:
         return "ERR Content type is not supported."
 
-@app.route('api/return_book/', methods=['GET', 'POST'])
+@app.route('/api/return_book/', methods=['GET', 'POST'])
 def return_book():
     if request.is_json:
         data = request.data
@@ -264,13 +264,13 @@ def remove_hold_request():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_hold_requests/')
+@app.route('/api/get_hold_requests/', methods=["GET", "POST"])
 def get_hold_requests():
     return db.get_hold_requests()
 
 # library handling
 
-@app.route('/api/create_publisher')
+@app.route('/api/create_publisher/', methods=["GET", "POST"])
 def create_publisher():
     if request.is_json:
         data = request.data
@@ -282,8 +282,8 @@ def create_publisher():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/edit_publisher')
-def create_publisher():
+@app.route('/api/edit_publisher/', methods=["GET", "POST"])
+def edit_publisher():
     if request.is_json:
         data = request.data
         if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
@@ -294,7 +294,7 @@ def create_publisher():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_publisher')
+@app.route('/api/get_publisher/', methods=["GET", "POST"])
 def get_publisher():
     if request.is_json:
         data = request.data
@@ -302,7 +302,7 @@ def get_publisher():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_publishers')
+@app.route('/api/get_publishers/', methods=["GET", "POST"])
 def get_publishers():
     if request.is_json:
         data = request.data
@@ -310,7 +310,7 @@ def get_publishers():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/create_author')
+@app.route('/api/create_author/', methods=["GET", "POST"])
 def create_author():
     if request.is_json:
         data = request.data
@@ -322,8 +322,8 @@ def create_author():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/edit_author')
-def create_author():
+@app.route('/api/edit_author/', methods=["GET", "POST"])
+def edit_author():
     if request.is_json:
         data = request.data
         if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
@@ -334,7 +334,7 @@ def create_author():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_author')
+@app.route('/api/get_author/', methods=["GET", "POST"])
 def get_author():
     if request.is_json:
         data = request.data
@@ -342,7 +342,7 @@ def get_author():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_authors')
+@app.route('/api/get_authors/', methods=["GET", "POST"])
 def get_authors():
     if request.is_json:
         data = request.data
@@ -350,7 +350,7 @@ def get_authors():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/create_genre')
+@app.route('/api/create_genre/', methods=["GET", "POST"])
 def create_genre():
     if request.is_json:
         data = request.data
@@ -362,8 +362,8 @@ def create_genre():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/edit_genre')
-def create_genre():
+@app.route('/api/edit_genre/', methods=["GET", "POST"])
+def edit_genre():
     if request.is_json:
         data = request.data
         if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
@@ -374,7 +374,7 @@ def create_genre():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_genre')
+@app.route('/api/get_genre/', methods=["GET", "POST"])
 def get_genre():
     if request.is_json:
         data = request.data
@@ -382,7 +382,7 @@ def get_genre():
     else:
         return "ERR Content type is not supported."
 
-@app.route('/api/get_genres')
+@app.route('/api/get_genres/', methods=["GET", "POST"])
 def get_genres():
     if request.is_json:
         data = request.data
