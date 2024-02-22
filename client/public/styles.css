@@ -1,0 +1,303 @@
+:root[data-theme="light"] {
+    --text: #1e1d1a;
+    --background: #f8faff;
+    --primary: #2c76ba;
+    --secondary: #dee3f2;
+    --accent: #4f94d5;
+}
+:root[data-theme="dark"] {
+    --text: #e5e4e1;
+    --background: #1f2023;
+    --primary: #6298cb;
+    --secondary: #1e242f;
+    --accent: #005380;
+}
+
+/* https://www.realtimecolors.com/?colors=e5e4e1-1f2023-6298cb-1e242f-005380&fonts=Poppins-Poppins */
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: var(--primary);
+    color: var(--text);
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    margin: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0;
+    background-color: var(--primary);
+    color: var(--background);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header * {
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    width: 100%;
+    background: var(--accent);
+}
+
+.navbar {
+    background: var(--inherit);
+    color: var(--background);
+    max-width: 500px;
+    overflow: scroll;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+
+    padding: 0;
+    margin: auto;
+}
+
+.navbar-element {
+    padding: 0.7rem;
+    width: 100%;
+    text-align: center;
+}
+
+.navbar-element:hover {
+    background-color: var(--secondary);
+    color: var(--text);
+}
+
+.navbar-element .drop-down {
+    display: block;
+    visibility: hidden;
+}
+
+.navbar-element:hover .drop-down {
+    visibility: visible;
+    z-index: 2;
+}
+
+.drop-down {
+    /* padding: 15px; */
+    position: absolute;
+    background: var(--secondary);
+
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.drop-down div {
+    padding: 0.5rem;
+}
+
+.drop-down div:hover {
+    background-color: var(--accent);
+    color: var(--background);
+}
+
+#page {
+    background-color: var(--background);
+    /* POPE ON A SKATEBOARD!! */
+    /* background-image: url("pope.png"); */
+    /* background: linear-gradient(0deg, rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0.50)), url("pope.png"); */
+    /* background-size: 10rem; */
+    /* background-repeat: repeat; */
+
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    align-items: center;
+}
+
+#user-preferences {
+    display: flex;
+    flex-direction: row;
+    justify-content:  center;
+}
+
+#user-preferences div {
+    margin: 1rem;
+}
+
+main {
+    /* width: 100vw; */
+    width: 100%;
+    max-width: 750px;
+    min-height: 50vh;
+}
+
+h1 { 
+
+}
+
+.form {
+    border: solid var(--primary) 1px;
+    border-radius: 0.5rem;
+    background-color: var(--secondary);
+    max-width: 400px;
+    margin: auto;
+}
+
+.form div {
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+
+input,
+select,
+textarea,
+button {
+    border: solid var(--primary) 1px;
+    background-color: var(--background);
+    border-radius: 0;
+    padding: 0.3rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    transition: all 0.2s ease-in;
+    outline-width: 0px;
+    box-shadow: 0 0 5px var(--primary);
+}
+
+textarea:focus {
+    transition: box-shadow 0.2s ease-in;
+    outline-width: 0px;
+    box-shadow: 0 0 5px var(--primary);
+}
+
+/* button:hover {
+    
+} */
+
+.footer {
+    padding: 1rem;
+    background-color: var(--primary);
+    color: var(--background);
+}
+
+#dashboard-menu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: inherit;
+}
+
+.dashboard-statistic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+
+    margin: 0.5rem;
+    padding: 0.2rem;
+    background-color: rgba(79, 148, 213, 0.1);
+    border-radius: 10px;
+}
+
+#display-objects {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.list-object-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.list-object-info span {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
+
+.list-object {
+    display: flex;
+    flex-direction: row;
+    max-height: 200px;
+    margin: 0;
+    padding: 0.5rem;
+    flex: 1 1 45%;
+}
+
+.list-object-pic {
+    /* max-width: 100px; */
+    max-height: 7.5rem;
+    width: auto;
+}
+
+.list-object * {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.list-object-name {
+    padding: 0;
+    margin: 0;
+}
+
+.list-object-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.list-object-actions-icons {
+    font-size: inherit * 2 !important;
+    padding: 0;
+}
+
+#object-filters {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+#pages-in-category {
+    font-size: 1.5rem;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+}
+
+#pages-in-category a:visited {
+    color: var(--primary);
+}
+
+#pages-in-category a:hover {
+    color: var(--text);
+}
+
+hr {
+    border-color: var(--primary);
+    width: 100%;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+}
+
+footer * {
+    flex: 1 1 100%;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
