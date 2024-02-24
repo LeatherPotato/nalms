@@ -1,45 +1,65 @@
 import React from "react";
-import { Route, Link, Routes, useLocation } from "react-router-dom";
+// import { Route, Link, Routes, useLocation } from "react-router-dom";
+import "../App.css";
 
-const navbar_sections_names = ["Admin", "Circulation", "Catalogue", "Account"]
+const navbar_sections_names = ["Admin", "Circulation", "Catalogue", "Account"];
 
-const navbar_elements = [
-    [("Dashboard",), ("Users",), ("Library",), ("Analytics",)],
-    [("Borrowing",), ("Late",), ("Hold Requests",)],
-    [("Search",), ("Manage",), ("Locate",)],
-    [("Preferences",), ("Integrations",), ("Notifications",), ("Borrowing History",)]
+const navbar_names_routes = [
+  [
+    ["Dashboard", "/admin/dashboard"],
+    ["Users", "/admin/users"],
+    ["Library", "/admin/library"]
+  ],
+  [
+    ["Borrowing", "circulation"],
+    ["Late", "circulation"],
+    ["Hold Requests", "circulation"],
+  ],
+  [
+    ["Search", "/catalogue"],
+    ["Manage", "/catalogue"],
+    ["Locate", "/catalogue"],
+  ],
+  [
+    ["Preferences", "/account"],
+    ["Integrations", "/account"],
+    ["Notifications", "/account"],
+    ["Borrowing History", "/account"],
+  ],
 ];
 
-const navbar_element = (props) => {
-  const {name, fields} = props;
+const NavbarElement = (props) => {
+  const { fields, name } = props;
   const dropdown_elements = fields.map((element) => {
-    return(
-        <div>
-            <a href={element[1]}>{element[0]}</a>
-        </div>
-        );
-    });
+    console.log(element);
+    return (
+      <a href={element[1]}>
+        <div class="dropdownLink">{element[0]}</div>
+      </a>
+    );
+  });
   return (
-    <div class="navbar-element">
-        {dropdown_elements}
+    <div className="navbarElement">
+      {name} <div className="dropDown">{dropdown_elements}</div>
     </div>
   );
 };
 
-
-
-class Navbar extends React.Component {
-  render() {
+const Navbar = () => {
+  const navbarElements = navbar_names_routes.map((element, index) => {
+    console.log("ONE");
     return (
-      <div>
-        <header>
-          <h1>NEA Project</h1>
-          <span class="material-symbols-outlined icon">library_books</span>
-        </header>
-        <nav></nav>
-      </div>
+      <NavbarElement fields={element} name={navbar_sections_names[index]} />
     );
-  }
-}
+  });
+  return (
+    <nav>
+      <div className="navbar">{navbarElements}</div>
+    </nav>
+  );
+};
+
+// https://stackoverflow.com/questions/48846289/why-is-my-react-component-is-rendering-twice
+// My navbar component was rendering twice for some reason so i followed this stackoverflow thread to fix it.
 
 export default Navbar;

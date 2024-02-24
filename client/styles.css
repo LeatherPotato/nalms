@@ -63,28 +63,28 @@ nav {
     margin: auto;
 }
 
-.navbar-element {
+.navbarElement {
     padding: 0.7rem;
     width: 100%;
     text-align: center;
 }
 
-.navbar-element:hover {
+.navbarElement:hover {
     background-color: var(--secondary);
     color: var(--text);
 }
 
-.navbar-element .drop-down {
+.navbarElement .drop-down {
     display: block;
     visibility: hidden;
 }
 
-.navbar-element:hover .drop-down {
+.navbarElement:hover .drop-down {
     visibility: visible;
     z-index: 2;
 }
 
-.drop-down {
+.dropDown {
     /* padding: 15px; */
     position: absolute;
     background: var(--secondary);
@@ -92,11 +92,11 @@ nav {
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
 }
 
-.drop-down div {
+.dropDown div {
     padding: 0.5rem;
 }
 
-.drop-down div:hover {
+.dropDown div:hover {
     background-color: var(--accent);
     color: var(--background);
 }
@@ -115,13 +115,13 @@ nav {
     align-items: center;
 }
 
-#user-preferences {
+#userPreferences {
     display: flex;
     flex-direction: row;
     justify-content:  center;
 }
 
-#user-preferences div {
+#userPreferences div {
     margin: 1rem;
 }
 
@@ -185,14 +185,14 @@ textarea:focus {
     color: var(--background);
 }
 
-#dashboard-menu {
+#dashboardMenu {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     width: inherit;
 }
 
-.dashboard-statistic {
+.dashboardStatistic {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -204,25 +204,25 @@ textarea:focus {
     border-radius: 10px;
 }
 
-#display-objects {
+#displayObjects {
     display: flex;
     flex-direction: row;
     align-content: center;
     justify-content: center;
     flex-wrap: wrap;
 }
-.list-object-info {
+.listObjectInfo {
     display: flex;
     flex-direction: column;
 }
 
-.list-object-info span {
+.listObjectInfo span {
     display: flex;
     flex-direction: row;
     justify-content: start;
 }
 
-.list-object {
+.listObject {
     display: flex;
     flex-direction: row;
     max-height: 200px;
@@ -231,13 +231,13 @@ textarea:focus {
     flex: 1 1 45%;
 }
 
-.list-object-pic {
+.listObjectPic {
     /* max-width: 100px; */
     max-height: 7.5rem;
     width: auto;
 }
 
-.list-object * {
+.listObject * {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -245,29 +245,29 @@ textarea:focus {
     padding-right: 0.5rem;
 }
 
-.list-object-name {
+.listObjectName {
     padding: 0;
     margin: 0;
 }
 
-.list-object-actions {
+.listObjectActions {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
-.list-object-actions-icons {
+.listObjectActionsIcons {
     font-size: inherit * 2 !important;
     padding: 0;
 }
 
-#object-filters {
+#objectFilters {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
 }
 
-#pages-in-category {
+#pagesInCategory {
     font-size: 1.5rem;
 }
 
@@ -278,11 +278,11 @@ a {
     padding: 0;
 }
 
-#pages-in-category a:visited {
+#pagesInCategory a:visited {
     color: var(--primary);
 }
 
-#pages-in-category a:hover {
+#pagesInCategory a:hover {
     color: var(--text);
 }
 
@@ -301,3 +301,12 @@ footer * {
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+
+.materialSymbolsOutlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
