@@ -4,7 +4,7 @@ class Database:
     import datetime
 
     def __init__(self, db_path):
-        self.con = self.sqlite3.connect(db_path)
+        self.con = self.sqlite3.connect(db_path, check_same_thread=False)
         # print(con.total_changes)
         self.con.row_factory = self.dict_factory
         self.cur = self.con.cursor()
@@ -183,7 +183,7 @@ class Database:
         self.con.commit()
 
     def check_user_password(self, username, inputPassword):
-        retrievedPassword = self.cur.execute("""SELECT Password FROM USERS WHERE Username=?""", (username,)).fetchone()
+        retrievedPassword = self.cur.execute("""SELECT Password FROM USERS WHERE Username=?""", (username,)).fetchone()['Password']
         self.con.commit()
         return retrievedPassword == inputPassword
 

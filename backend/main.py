@@ -1,4 +1,6 @@
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory, request, jsonify
+import json
+from flask_cors import CORS
 import os
 
 import variables
@@ -8,6 +10,7 @@ import custom_classes
 import conversions
 
 app = Flask(__name__, static_folder=variables.STATIC_FOLDER)
+CORS(app, origins=["https://localhost:8080", "http://localhost:8080", "https://localhost:3000", "http://localhost:3000"])
 db = Database(variables.DATABASE_PATH)
 
 # serve react app
@@ -18,7 +21,7 @@ def serve(path):
         return send_from_directory(app.static_folder, path)
     else:
         # returns error page 
-        # FIXME edit later to return actual error page
+        # FIXME edit later to return json.dumps(actual error page
         return send_from_directory(app.static_folder, 'index.html')
 
 # API/server code
@@ -40,117 +43,119 @@ def api_home():
 @app.route('/api/create_user/', methods=['GET', 'POST'])
 def create_user():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=8):
-            if validation.validate_email(data.get('email')) and validation.validate_password(data.get('password')) and validation.validate_username(data.get('username')):
-                if db.check_username_available(data.get('username')):
-                    hashedPassword = conversions.hash_password(input_password=data.get('password'))
-                    user = custom_classes.User(input_fname=data.get('fisrtName'),
-                                input_lname=data.get('lastName'),
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=8):
+            if validation.validate_email(data['email']) and validation.validate_password(data['password']) and validation.validate_username(data['username']):
+                if db.check_username_available(data['username']):
+                    hashedPassword = conversions.hash_password(input_password=data['password'])
+                    user = custom_classes.User(input_fname=data['fisrtName'],
+                                input_lname=data['lastName'],
                                 input_password=hashedPassword,
-                                input_schoolYear=data.get('schoolYear'),
-                                input_username=data.get('username'),
-                                perms=data.get('userPerms'),
-                                email=data.get('email')
+                                input_schoolYear=data['schoolYear'],
+                                input_username=data['username'],
+                                perms=data['userPerms'],
+                                email=data['email']
                                 )
                     userId = db.create_user(user)
-                    return userId
+                    return json.dumps(userId)
                 else:
-                    return "ERR Username Taken"
+                    return json.dumps("ERR Username Taken")
             else:
-                return "ERR Invalid Data"
+                return json.dumps("ERR Invalid Data")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/change_password/', methods=['GET', 'POST'])
 def change_password():
     if request.is_json:
         data = request.json
-        if validation.validate_password(data.get('password')):
-            password = conversions.hash_password(data.get('password'))
-            db.change_password(newPassword=password, userId=data.get('senderUserId'))
-            return "SUCCESS Password Changed"
+        if validation.validate_password(data['password']):
+            password = conversions.hash_password(data['password'])
+            db.change_password(newPassword=password, userId=data['senderUserId'])
+            return json.dumps("SUCCESS Password Changed")
         else:
-            return "ERR Invalid Password"
+            return json.dumps("ERR Invalid Password")
     else:
-        return "Content type is not supported."
+        return json.dumps("Content type is not supported.")
     
 @app.route('/api/change_username/', methods=['GET', 'POST'])
 def change_username():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=8) or data.get('senderUserID') == data.get('userId'):
-            if db.check_username_available(data.get('username')):
-                db.update_username(newUsername=data.get('username'), userId=data.get('senderUserId'))
-                return "SUCCESS Username Changed"
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=8) or data['senderUserID'] == data['userId']:
+            if db.check_username_available(data['username']):
+                db.update_username(newUsername=data['username'], userId=data['senderUserId'])
+                return json.dumps("SUCCESS Username Changed")
             else:
-                return "ERR Username Taken"
+                return json.dumps("ERR Username Taken")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
     
-@app.route('/api/login', methods=["GET", "POST"])
+@app.route('/api/login/', methods=["GET", "POST"])
 def login():
     if request.is_json:
-        data = request.data
-        password = conversions.hash_password(data.get('password'))
-        if db.check_user_password(username=data.get('username')):
-            return db.get_userid(username=data.get('username'))
+        data = request.json
+        print(data)
+        password = conversions.hash_password(data['password'])
+        print(password)
+        if db.check_user_password(username=data['username'], inputPassword=password):
+            return json.dumps(db.get_userid(username=data['username']))
         else:
-            return "ERR Incorrect Password"
+            return json.dumps("ERR Incorrect Password")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_user/', methods=["GET", "POST"])
 def get_user():
     if request.is_json:
-        data = request.data
-        return db.get_user(userId=data.get('userId'))
+        data = request.json
+        return json.dumps(db.get_user(userId=data['userId']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_users/', methods=["GET", "POST"])
 def get_users():
     if request.is_json:
-        data = request.data
+        data = request.json
         conditions = custom_classes.UserConditions(
-            schoolYear=data.get('schoolYear'),
-            firstName=data.get('firstName'),
-            lastName=data.get('lastName'),
-            username=data.get('username'),
-            sortBy=data.get('sortBy'),
-            ascending=data.get('ascending'))
-        return db.get_users(conditions=conditions, page=data.get('page'))
+            schoolYear=data['schoolYear'],
+            firstName=data['firstName'],
+            lastName=data['lastName'],
+            username=data['username'],
+            sortBy=data['sortBy'],
+            ascending=data['ascending'])
+        return json.dumps(db.get_users(conditions=conditions, page=data['page']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/send_notification/', methods=["GET", "POST"])
 def send_notification():
     if request.is_json:
-        data = request.data
-        db.create_notification(userId=data.get('userId'), notificationContent=data.get('notificationContent'), notificationType=data.get('notificationType'))
+        data = request.json
+        db.create_notification(userId=data['userId'], notificationContent=data['notificationContent'], notificationType=data['notificationType'])
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_notifications/', methods=["GET", "POST"])
 def get_notification():
     if request.is_json:
-        data = request.data
-        return db.get_notifications(userId=data.get('userId'))
+        data = request.json
+        return json.dumps(db.get_notifications(userId=data['userId']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/read_notification/', methods=["GET", "POST"])
 def read_notification():
     if request.is_json:
-        data = request.data
-        db.read_notification(data.get('notificationId'))
-        return "SUCCESS Notification Read"
+        data = request.json
+        db.read_notification(data['notificationId'])
+        return json.dumps("SUCCESS Notification Read")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 # catalogue handling 
 
@@ -158,237 +163,237 @@ def read_notification():
 def create_book():
     if request.is_json:
         data = request.json
-        if not conversions.convert_isbn(data.get('isbn')) == None:
-            if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
-                book = custom_classes.Book(isbn13=data.get('isbn'), genre_name=data.get('genre'))
+        if not conversions.convert_isbn(data['isbn']) == None:
+            if db.check_user_permissions(userId=data['senderUserId'], action=4):
+                book = custom_classes.Book(isbn13=data['isbn'], genre_name=data['genre'])
                 bookId = db.create_book(book)
-                return bookId
+                return json.dumps(bookId)
             else:
-                return "ERR Missing Permissions"
+                return json.dumps("ERR Missing Permissions")
         else:
-            return "ERR Invalid ISBN"
+            return json.dumps("ERR Invalid ISBN")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/delete_book/', methods=['GET', 'POST'])
 def delete_book():
     if request.is_json:
         data = request.json
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
-            db.delete_row(table="BOOKS", conditions=[f"BookId={data.get('bookId')}"])
-            return "SUCCESS Book Deleted"
+        if db.check_user_permissions(userId=data['senderUserId'], action=4):
+            db.delete_row(table="BOOKS", conditions=[f"BookId={data['bookId']}"])
+            return json.dumps("SUCCESS Book Deleted")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_book/', methods=["GET", "POST"])
 def get_book():
     if request.is_json:
-        data = request.data
-        return db.get_book(bookId=data.get('bookId'))
+        data = request.json
+        return json.dumps(db.get_book(bookId=data['bookId']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_books/', methods=["GET", "POST"])
 def get_books():
     if request.is_json:
-        data = request.data
+        data = request.json
         conditions = custom_classes.BookConditions(
-            isbn=data.get('isbn'),
-            title=data.get('title'),
-            availability=data.get('availability'),
-            genreId=data.get('genreId'),
-            sortBy=data.get('sortBy'),
-            ascending=data.get('ascending'))
-        return db.get_books(conditions=conditions, page=data.get('page'))
+            isbn=data['isbn'],
+            title=data['title'],
+            availability=data['availability'],
+            genreId=data['genreId'],
+            sortBy=data['sortBy'],
+            ascending=data['ascending'])
+        return json.dumps(db.get_books(conditions=conditions, page=data['page']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 # circulation handling
 
 @app.route('/api/borrow_book/', methods=['GET', 'POST'])
 def borrow_book():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=2):
-            bookId = data.get('bookId')
-            userId = data.get('borrowerId')
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=2):
+            bookId = data['bookId']
+            userId = data['borrowerId']
             if db.availability_book(bookId=bookId):
                 db.edit_hold_request(bookId=bookId, userId=userId, status=0)
                 db.borrow_book(userId=userId, bookId=bookId)
             else:
-                return "ERR Book Unavailable"
+                return json.dumps("ERR Book Unavailable")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/return_book/', methods=['GET', 'POST'])
 def return_book():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=2):
-            bookId = data.get('bookId')
-            userId = data.get('borrowerId')
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=2):
+            bookId = data['bookId']
+            userId = data['borrowerId']
             if not db.availability_book(bookId=bookId):
                 db.return_book(userId=userId, bookId=bookId)
             else:
-                return "ERR Book Not Borrowed"
+                return json.dumps("ERR Book Not Borrowed")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/creat_hold_request/', methods=["GET", "POSTo"])
 def creat_hold_request():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=1):
-            db.create_hold_request(bookId=data.get('bookId'), userId=data.get('senderUserId'))
-            return "SUCCESS Created Hold Request!"
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=1):
+            db.create_hold_request(bookId=data['bookId'], userId=data['senderUserId'])
+            return json.dumps("SUCCESS Created Hold Request!")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/remove_hold_request/', methods=["GET", "POST"])
 def remove_hold_request():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=1):
-            db.edit_hold_request(bookId=data.get('bookId'), userId=data.get('senderUserId'), status=0)
-            return "SUCCESS Hold Request Removed"
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=1):
+            db.edit_hold_request(bookId=data['bookId'], userId=data['senderUserId'], status=0)
+            return json.dumps("SUCCESS Hold Request Removed")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_hold_requests/', methods=["GET", "POST"])
 def get_hold_requests():
-    return db.get_hold_requests()
+    return json.dumps(db.get_hold_requests())
 
 # library handling
 
 @app.route('/api/create_publisher/', methods=["GET", "POST"])
 def create_publisher():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
-            db.create_publisher(publisherName=data.get('publisherName'))
-            return "SUCCESS Created Publisher"
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=4):
+            db.create_publisher(publisherName=data['publisherName'])
+            return json.dumps("SUCCESS Created Publisher")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/edit_publisher/', methods=["GET", "POST"])
 def edit_publisher():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
-            db.edit_publisher(publisherName=data.get('publisherName'), publisherId=data.get('publisherId'))
-            return "SUCCESS Edited publisher"
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=4):
+            db.edit_publisher(publisherName=data['publisherName'], publisherId=data['publisherId'])
+            return json.dumps("SUCCESS Edited publisher")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_publisher/', methods=["GET", "POST"])
 def get_publisher():
     if request.is_json:
-        data = request.data
-        return db.get_publisher(publisherId=data.get('publisherId'))
+        data = request.json
+        return json.dumps(db.get_publisher(publisherId=data['publisherId']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_publishers/', methods=["GET", "POST"])
 def get_publishers():
     if request.is_json:
-        data = request.data
-        return db.get_publishers(publisherName=data.get('publisherName'), page=data.get('page'))
+        data = request.json
+        return json.dumps(db.get_publishers(publisherName=data['publisherName'], page=data['page']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/create_author/', methods=["GET", "POST"])
 def create_author():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
-            db.create_author(authorName=data.get('authorName'))
-            return "SUCCESS Created author"
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=4):
+            db.create_author(authorName=data['authorName'])
+            return json.dumps("SUCCESS Created author")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/edit_author/', methods=["GET", "POST"])
 def edit_author():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
-            db.edit_author(authorName=data.get('authorName'), authorId=data.get('authorId'))
-            return "SUCCESS Edited author"
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=4):
+            db.edit_author(authorName=data['authorName'], authorId=data['authorId'])
+            return json.dumps("SUCCESS Edited author")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_author/', methods=["GET", "POST"])
 def get_author():
     if request.is_json:
-        data = request.data
-        return db.get_author(authorId=data.get('authorId'))
+        data = request.json
+        return json.dumps(db.get_author(authorId=data['authorId']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_authors/', methods=["GET", "POST"])
 def get_authors():
     if request.is_json:
-        data = request.data
-        return db.get_authors(authorName=data.get('authorName'), page=data.get('page'))
+        data = request.json
+        return json.dumps(db.get_authors(authorName=data['authorName'], page=data['page']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/create_genre/', methods=["GET", "POST"])
 def create_genre():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
-            db.create_genre(genreName=data.get('genreName'))
-            return "SUCCESS Created genre"
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=4):
+            db.create_genre(genreName=data['genreName'])
+            return json.dumps("SUCCESS Created genre")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/edit_genre/', methods=["GET", "POST"])
 def edit_genre():
     if request.is_json:
-        data = request.data
-        if db.check_user_permissions(userId=data.get('senderUserId'), action=4):
-            db.edit_genre(genreName=data.get('genreName'), genreId=data.get('genreId'))
-            return "SUCCESS Editedgenrer"
+        data = request.json
+        if db.check_user_permissions(userId=data['senderUserId'], action=4):
+            db.edit_genre(genreName=data['genreName'], genreId=data['genreId'])
+            return json.dumps("SUCCESS Editedgenrer")
         else:
-            return "ERR Missing Permissions"
+            return json.dumps("ERR Missing Permissions")
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_genre/', methods=["GET", "POST"])
 def get_genre():
     if request.is_json:
-        data = request.data
-        return db.get_genre(genreId=data.get('genreId'))
+        data = request.json
+        return json.dumps(db.get_genre(genreId=data['genreId']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 @app.route('/api/get_genres/', methods=["GET", "POST"])
 def get_genres():
     if request.is_json:
-        data = request.data
-        return db.get_genres(genreName=data.get('genreName'), page=data.get('page'))
+        data = request.json
+        return json.dumps(db.get_genres(genreName=data['genreName'], page=data['page']))
     else:
-        return "ERR Content type is not supported."
+        return json.dumps("ERR Content type is not supported.")
 
 
 

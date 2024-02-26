@@ -329,8 +329,12 @@ textarea:focus {
 }
 
 a {
-    color: var(--primary);
+    color: var(--background);
     text-decoration: none;
+}
+
+link {
+    color: var(--accent)
 }
 
 #pagesInCategory a:visited {
