@@ -6,32 +6,31 @@ const navbar_sections_names = ["Admin", "Circulation", "Catalogue", "Account"];
 
 const navbar_names_routes = [
   [
-    ["Dashboard", "/admin/dashboard"],
-    ["Users", "/admin/users"],
-    ["Library", "/admin/library"]
+    ["Dashboard", "/admin#adminDashboardElement"],
+    ["Users", "/admin#adminUsersElement"],
+    ["Library", "/admin#adminLibraryElement"]
   ],
   [
-    ["Borrowing", "circulation"],
-    ["Late", "circulation"],
-    ["Hold Requests", "circulation"],
+    ["Borrowing", "/circulation#cicrulationBorrowingElement"],
+    ["Lates", "/circulation#circulationLatesElement"],
+    ["Hold Requests", "/circulation#circulationHoldRequestsElement"],
   ],
   [
-    ["Search", "/catalogue"],
-    ["Manage", "/catalogue"],
-    ["Locate", "/catalogue"],
+    ["Search", "/catalogue#catalogueSearchElement"],
+    ["Manage", "/catalogue#catalogueManageElement"],
+    ["Locate", "/catalogue#catalogueLocateElement"],
   ],
   [
-    ["Preferences", "/account"],
-    ["Integrations", "/account"],
-    ["Notifications", "/account"],
-    ["Borrowing History", "/account"],
+    ["Preferences", "/account#accountPreferencesElement"],
+    ["Integrations", "/accountaccountNotificationsElement#"],
+    ["Notifications", "/account#accountBorrowingHistoryElement"],
+    ["Borrowing History", "/account#accountIntegrationsElement"],
   ],
 ];
 
 const NavbarElement = (props) => {
   const { fields, name } = props;
   const dropdown_elements = fields.map((element) => {
-    console.log(element);
     return (
       <a href={element[1]}>
         <div class="dropdownLink">{element[0]}</div>

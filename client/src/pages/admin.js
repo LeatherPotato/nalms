@@ -55,4 +55,4 @@ class Admin extends React.Component {
   }
 }
 
-export {Admin, Dashboard, Users, Library};
+export default Admin;

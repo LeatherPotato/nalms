@@ -1,6 +1,5 @@
-const GlobalVars = {
-    userId: -1,
-    serverURL: "http://localhost:8080/api/",
-}
-
-export default GlobalVars;
+const GLOBALS = {
+    serverURL: "http://localhost:8080/api/", 
+    userId: -1
+};
+export default GLOBALS;
