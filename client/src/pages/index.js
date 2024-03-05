@@ -18,15 +18,15 @@ class Home extends React.Component {
     this.state = {
       username: "",
       password: "",
-      loggedIn: Cookies.get("USER_ID")===undefined ? false : true,
+      loggedIn: Cookies.get("USER_ID") === undefined ? false : true,
       //   only sets logged in to true if the userID cookie exists, which is created when the user is logged in, and deleted when the cookie expires
     };
-    console.log(this.state)
+    console.log(this.state);
   }
 
   setUserId = (returnedUserId) => {
     Cookies.set("USER_ID", returnedUserId, { expires: 1 / 24 });
-    this.setState()
+    this.setState();
     // Created a cookie that will expire in one hour for USER_ID
   };
 
@@ -57,9 +57,8 @@ class Home extends React.Component {
     return (
       <div id="page">
         <main>
-          {(this.state.loggedIn === false) ? (
-          <div>
-              
+          {this.state.loggedIn === false ? (
+            <div>
               <h2>Login</h2>
               <form onSubmit={this.handleSubmit} class="form">
                 <div class="form-input">
@@ -84,8 +83,10 @@ class Home extends React.Component {
                   <button name="submitButton">Login</button>
                 </div>
               </form>
-          </div>
-        ) : (<WelcomePage />)}
+            </div>
+          ) : (
+            <WelcomePage />
+          )}
         </main>
       </div>
     );

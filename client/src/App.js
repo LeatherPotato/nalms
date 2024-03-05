@@ -18,11 +18,9 @@ const App = () => {
 
   const ifLoggedIn = (component) => {
     let userId = Cookies.get('USER_ID')
-    if (userId === -1) {
-      console.log(userId)
+    if (userId===-1 || userId===undefined) {
       return <LoginError />;
     } else {
-      console.log(userId)
       return component;
     }
   }

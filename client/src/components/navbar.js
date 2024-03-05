@@ -22,7 +22,7 @@ const navbar_names_routes = [
   ],
   [
     ["Preferences", "/account#accountPreferencesElement"],
-    ["Integrations", "/accountaccountNotificationsElement#"],
+    ["Integrations", "/account#taccountNotificationsElement#"],
     ["Notifications", "/account#accountBorrowingHistoryElement"],
     ["Borrowing History", "/account#accountIntegrationsElement"],
   ],
@@ -46,7 +46,6 @@ const NavbarElement = (props) => {
 
 const Navbar = () => {
   const navbarElements = navbar_names_routes.map((element, index) => {
-    console.log("ONE");
     return (
       <NavbarElement fields={element} name={navbar_sections_names[index]} />
     );

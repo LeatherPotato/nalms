@@ -10,7 +10,7 @@ import custom_classes
 import conversions
 
 app = Flask(__name__, static_folder=variables.STATIC_FOLDER)
-CORS(app, origins=["https://localhost:8080", "http://localhost:8080", "https://localhost:3000", "http://localhost:3000"])
+CORS(app, origins=["https://localhost:8080", "http://localhost:8080", "https://localhost:3000", "http://localhost:3000", "192.168.0.37"])
 db = Database(variables.DATABASE_PATH)
 
 # serve react app
@@ -113,7 +113,12 @@ def login():
 def get_user():
     if request.is_json:
         data = request.json
-        return json.dumps(db.get_user(userId=data['userId']))
+        # print(data)
+        userId=data.get('userId')
+        # print(userId)
+        userData = db.get_user(userId=int(userId))
+        print(userData)
+        return userData
     else:
         return json.dumps("ERR Content type is not supported.")
 
