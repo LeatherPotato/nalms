@@ -5,7 +5,7 @@ const Header = () => {
           <h1>NEA Project</h1>
       </a>
       <a href="/">
-        <span className="material-symbols-outlined icon">library_books</span>
+        <span className="material-symbols-outlined iconButton icon">library_books</span>
       </a>
     </header>
   );

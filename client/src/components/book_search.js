@@ -41,11 +41,11 @@ const BookElement = (props) => {
         <span>{genreName}</span>
         <span>
           Actions
-          <span class="material-symbols-outlined" onClick={() => {navigator.clipboard.writeText(bookId)}}>content_copy</span>
+          <span class="material-symbols-outlined iconButton" onClick={() => {navigator.clipboard.writeText(bookId)}}>content_copy</span>
           {showExtra === false ? (
-            <span class="material-symbols-outlined" onClick={() => {setShowExtra(true)}}>expand_more</span>
+            <span class="material-symbols-outlined iconButton" onClick={() => {setShowExtra(true)}}>expand_more</span>
           ) : (
-            <span class="material-symbols-outlined" onClick={() => {setShowExtra(false)}}>expand_less</span>
+            <span class="material-symbols-outlined iconButton" onClick={() => {setShowExtra(false)}}>expand_less</span>
           )}
         </span>
         {showExtra === true ? (

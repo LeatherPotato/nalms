@@ -36,7 +36,7 @@ const Preferences = () => {
         <div>
           <span style={{ display: "flex", justifyContent: "space-between" }}>
             <h3 style={{ margin: "0", padding: "0" }}>User Info</h3>
-            <span class="material-symbols-outlined">edit</span>
+            <span class="material-symbols-outlined iconButton">edit</span>
           </span>
           <div id="display-user-info">
             <p>

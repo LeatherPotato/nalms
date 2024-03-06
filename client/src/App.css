@@ -347,6 +347,9 @@ textarea:focus {
     overflow-y: scroll;
 }
 
+.iconButton {
+    cursor: pointer;
+}
 
 #objectFilters {
     display: flex;
