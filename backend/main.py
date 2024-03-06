@@ -99,9 +99,9 @@ def change_username():
 def login():
     if request.is_json:
         data = request.json
-        # print(data)
+        print(data)
         password = conversions.hash_password(data['password'])
-        # print(password)
+        print(password)
         if db.check_user_password(username=data['username'], inputPassword=password):
             return json.dumps(db.get_userid(username=data['username']))
         else:
@@ -117,7 +117,7 @@ def get_user():
         userId=data.get('userId')
         # print(userId)
         userData = db.get_user(userId=int(userId))
-        # print(userData)
+        print(userData)
         return userData
     else:
         return json.dumps("ERR Content type is not supported.")
@@ -205,14 +205,13 @@ def get_books():
     if request.is_json:
         data = request.json
         conditions = custom_classes.BookConditions(
-            isbn=int(data['isbn']),
+            isbn=data['isbn'],
             title=data['title'],
-            availability=int(data['availability']),
-            genreId=int(data['genreId']),
+            availability=data['availability'],
+            genreId=data['genreId'],
             sortBy=data['sortBy'],
             ascending=data['ascending'])
-        # print(conditions.__dict__)
-        return json.dumps(db.get_books(conditions=conditions, page=int(data['page'])))
+        return json.dumps(db.get_books(conditions=conditions, page=data['page']))
     else:
         return json.dumps("ERR Content type is not supported.")
 
@@ -397,10 +396,7 @@ def get_genre():
 def get_genres():
     if request.is_json:
         data = request.json
-        # print(data)
-        genres = db.get_genres(genreName=data['genreName'], page=int(data['page']))
-        # print(genres)
-        return genres
+        return json.dumps(db.get_genres(genreName=data['genreName'], page=data['page']))
     else:
         return json.dumps("ERR Content type is not supported.")
 

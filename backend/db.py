@@ -42,7 +42,7 @@ class Database:
                 (ISBN, Title, AuthorId, GenreId, PublicationDate, PublisherId, Description, CoverImage) 
                 VALUES(?,?,?,?,?,?,?,?) RETURNING (BookDataId)""", 
                 (Book.isbn, Book.title, Book.author_id, Book.genre_id, Book.publication_date, Book.publisher_id, Book.description, Book.cover_image)).fetchone()
-        bookId = self.cur.execute("""INSERT INTO BOOKS (Availability, BookDataIsbn) VALUES (1, ?) RETURNING (BookId)""", (bookDataPk['BookDataId'],)).fetchone()
+        bookId = self.cur.execute("""INSERT INTO BOOKS (Availability, BookDataIsbn) VALUES (1, ?) RETURNING (BookId)""", (bookDataPk[0],)).fetchone()
         self.con.commit()
         return bookId
 
@@ -73,12 +73,11 @@ class Database:
         # INNER JOIN Customers ON Orders.CustomerID=Customers.CustomerID;
         book = self.cur.execute(""" SELECT BOOKS.BookId, BOOKS.Availability, BOOK_DATA.ISBN, 
             BOOK_DATA.Title, BOOK_DATA.GenreId, BOOK_DATA.PublicationDate, BOOK_DATA.Description, 
-            BOOK_DATA.CoverImage, AUTHORS.AuthorName, PUBLISHERS.PublisherName, GENRES.GenreName
+            BOOK_DATA.CoverImage, AUTHORS.AuthorName, PUBLISHERS.PublisherName 
             FROM BOOKS
             FULL OUTER JOIN BOOK_DATA ON BOOKS.BookDataIsbn = BOOK_DATA.BookDataId
             FULL OUTER JOIN AUTHORS ON BOOK_DATA.AuthorId = AUTHORS.AuthorId
             FULL OUTER JOIN PUBLISHERS ON BOOK_DATA.PublisherId = PUBLISHERS.PublisherId
-            FULL OUTER JOIN GENRES ON BOOK_DATA.GenreId = GENRES.GenreId
             WHERE BOOKS.BookId!=?""", (bookId,)).fetchall()
         return book
     
@@ -86,12 +85,11 @@ class Database:
         # ran into operational error when writing this
         books = self.cur.execute(f""" SELECT BOOKS.BookId, BOOKS.Availability, BOOK_DATA.ISBN, 
             BOOK_DATA.Title, BOOK_DATA.GenreId, BOOK_DATA.PublicationDate, BOOK_DATA.Description, 
-            BOOK_DATA.CoverImage, AUTHORS.AuthorName, PUBLISHERS.PublisherName, GENRES.GenreName
+            BOOK_DATA.CoverImage, AUTHORS.AuthorName, PUBLISHERS.PublisherName 
             FROM BOOKS
             FULL OUTER JOIN BOOK_DATA ON BOOKS.BookDataIsbn = BOOK_DATA.BookDataId
             FULL OUTER JOIN AUTHORS ON BOOK_DATA.AuthorId = AUTHORS.AuthorId
             FULL OUTER JOIN PUBLISHERS ON BOOK_DATA.PublisherId = PUBLISHERS.PublisherId
-            FULL OUTER JOIN GENRES ON BOOK_DATA.GenreId = GENRES.GenreId
             WHERE { "BOOK_DATA.ISBN=?"if not conditions.isbn == -1 else "BOOK_DATA.ISBN!=?" } AND 
             {"BOOK_DATA.Title=?" if not conditions.title == '' else "BOOK_DATA.Title!=?"} AND 
             { "BOOKS.Availability=?"if not conditions.availability == -1 else "BOOKS.Availability!=?" } AND 
@@ -104,9 +102,9 @@ class Database:
     def create_genre(self, genreName: str):
         genreId = self.cur.execute("""SELECT GenreId FROM GENRES WHERE GenreName=?""", (genreName,)).fetchone()
         if genreId == None:
-            genreId = self.cur.execute("""INSERT INTO GENRES (GenreName) VALUES (?) REUTRNING GenreId""", (genreName,)).fetchone()
+            genreId = self.cur.execute("""INSERT INTO GENRES (GenreName) VALUES (?)""", (genreName,)).fetchone()
         self.con.commit()
-        return genreId['GenreId']
+        return genreId
 
     def edit_genre(self, genreName: str, genreId : int):
         self.cur.execute("""UPDATE GENRES SET GenreName=? WHERE GenreId=?""", (genreName, genreId))
@@ -118,16 +116,17 @@ class Database:
     
     def get_genres(self, genreName, page):
         genres = self.cur.execute(f"""SELECT * FROM GENRES 
-            WHERE {"""GenreName!=?""" if genreName=='' else """GenreName=?"""}
-            LIMIT 30 OFFSET {30*(page-1)}""", (genreName + ("" if genreName == "" else "%"),)).fetchall()
+            WHERE {"""GenreName=?""" if not genreName=='' else """GenreName!=?"""} 
+            ORDER BY GenreName ASC
+            LIMIT 30 OFFSET {30*(page-1)}""", (genreName + ("%" if not genreName == "" else ""),)).fetchmany()
         return genres
 
     def create_author(self, authorName):
         authorId = self.cur.execute("""SELECT AuthorId FROM AUTHORS WHERE AuthorName=?""", (authorName,)).fetchone()
         if authorId == None:
-            authorId = self.cur.execute("""INSERT INTO Authors (AuthorName) VALUES (?) RETURNING AuthorId""", (authorName,)).fetchone()
+            authorId = self.cur.execute("""INSERT INTO Authors (AuthorName) VALUES (?)""", (authorName,)).fetchone()
         self.con.commit()
-        return authorId['AuthorId']
+        return authorId
 
     def edit_author(self, authorName: str, authorId : int):
         self.cur.execute("""UPDATE AUTHORS SET AuthorName=? WHERE AuthorId=?""", (authorName, authorId))
@@ -141,16 +140,16 @@ class Database:
         authors = self.cur.execute(f"""SELECT * FROM AUTHORS 
             WHERE {"""AuthorName=?""" if not authorName=='' else """AuthorName!=?"""} 
             ORDER BY AuthorName ASC
-            LIMIT 30 OFFSET {30*(page-1)}""", (authorName + ("%" if not authorName == "" else ""),)).fetchall()
+            LIMIT 30 OFFSET {30*(page-1)}""", (authorName + ("%" if not authorName == "" else ""),)).fetchmany()
         return authors
 
     def create_publisher(self, publisherName):
         if publisherName == '':
             return 0
         else:
-            publisherId = self.cur.execute("""INSERT INTO PUBLISHERS (PublisherName) VALUES (?) RETURNING PublisherId""", (publisherName,)).fetchone()
+            publisherId = self.cur.execute("""INSERT INTO PUBLISHERS (PublisherName) VALUES (?)""", (publisherName,)).fetchone()
             self.con.commit()
-            return publisherId['PublisherId']
+            return publisherId
         
     def edit_publisher(self, publisherName: str, publisherId : int):
         self.cur.execute("""UPDATE PUBLISHERS SET PublisherName=? WHERE PublisherId=?""", (publisherName, publisherId))
@@ -164,7 +163,7 @@ class Database:
         publishers = self.cur.execute(f"""SELECT * FROM PUBLISHERS 
             WHERE {"""PublisherName=?""" if not publisherName=='' else """PublisherName!=?"""} 
             ORDER BY PublisherName ASC
-            LIMIT 30 OFFSET {30*(page-1)}""", (publisherName+ ("%" if not publisherName == "" else "" ),)).fetchall()
+            LIMIT 30 OFFSET {30*(page-1)}""", (publisherName+ ("%" if not publisherName == "" else "" ),)).fetchmany()
         return publishers
 
     def create_user(self, user: User):
@@ -222,7 +221,7 @@ class Database:
             { "Username=?"if not conditions.username == -1 else "Username!=?" }
             {f"ORDER BY {conditions.sortBy} {"ASC" if conditions.ascending==True else "DESC"}" if not conditions.sortBy == None else ""}
             LIMIT 30 OFFSET {30*(page-1)}""",
-            (conditions.schoolYear, conditions.firstName, conditions.lastName, conditions.username)).fetchall()
+            (conditions.schoolYear, conditions.firstName, conditions.lastName, conditions.username)).fetchmany()
         return users
 
     def create_notification(self, userId: int, notificationContent: str, notificationType: str):
