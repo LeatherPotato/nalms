@@ -15,13 +15,16 @@ const Preferences = () => {
       userId: Cookies.get("USER_ID"),
     }),
   };
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(GLOBALS.serverURL.concat("/get_user/"), UserInfoRequestOptions)
       .then((response) => response.json())
       .then((data) => setUserData(data))
       .catch((err) => console.log(err));
   }, []);
   console.log(userData);
+
+  // https://stackoverflow.com/questions/55484033/reactjs-how-to-call-useeffect-hook-only-once-to-fetch-api-data
+  // FIXED ISSUE: it sent multiple requests
 
   return (
     <div id="accountPreferencesElement">
@@ -80,7 +83,7 @@ const Notifications = () => {
   //     userId: Cookies.get("USER_ID"),
   //   }),
   // };
-  // React.useEffect(() => {
+  // useEffect(() => {
   //   fetch(GLOBALS.serverURL.concat("/get_notifications/"), NotificationsRequestOptions)
   //     .then((response) => response.json())
   //     .then((data) => setNofications(data))

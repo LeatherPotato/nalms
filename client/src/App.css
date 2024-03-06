@@ -291,6 +291,7 @@ textarea:focus {
 .listObjectPic {
     /* max-width: 100px; */
     max-height: 7.5rem;
+    max-width: 5.319;
     width: auto;
 }
 
@@ -317,6 +318,35 @@ textarea:focus {
     font-size: inherit * 2 !important;
     padding: 0;
 }
+
+.availableBook {
+    
+}
+
+.unavailableBook {
+
+}
+
+.objectShowExtra {
+    max-height: none;
+}
+
+.objectShowExtra span, .objectShowExtra h3 {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+}
+
+.objectHideExtra {
+    max-height: 7.5rem;
+}
+
+.objectDescription{
+    padding: 0.5rem;
+    font-style: italic;
+    max-height: 5rem;
+    overflow-y: scroll;
+}
+
 
 #objectFilters {
     display: flex;
@@ -360,7 +390,7 @@ footer * {
 }
 
 .NotificationElement {
-    
+
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");

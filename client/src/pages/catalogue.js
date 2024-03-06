@@ -1,11 +1,12 @@
 import React from "react";
 import "../App.css";
+import BookSearchElement from '../components/book_search'
 
 const  Search = () => {
     return (
         <div id="catalogueSearchElement">
             <h1>Search Element</h1>
-            <p>content goes here</p>
+            <BookSearchElement />
         </div>
     );
 };

@@ -12,8 +12,12 @@ class Book:
         self.publisher_name = book_meta['Publisher']
         self.publisher_id = 0 # will set to 0 until real value is found in db.py
         self.description = self.isbnapi.desc(isbn13)
-        self.cover_image = self.isbnapi.cover(isbn13)
-        if self.cover_image == {}:
+        try:
+            try:
+                self.cover_image = self.isbnapi.cover(isbn13)['thumbnail']
+            except:
+                self.cover_image = self.isbnapi.cover(isbn13)['thumbnail']
+        except:
             print('no cover image')
             self.cover_image = 'NONE'
     
