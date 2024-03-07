@@ -204,15 +204,18 @@ def get_book():
 def get_books():
     if request.is_json:
         data = request.json
+        print("DATA", data)
         conditions = custom_classes.BookConditions(
-            isbn=int(data['isbn']),
+            isbn=data['isbn'],
             title=data['title'],
             availability=int(data['availability']),
             genreId=int(data['genreId']),
             sortBy=data['sortBy'],
             ascending=data['ascending'])
-        # print(conditions.__dict__)
-        return json.dumps(db.get_books(conditions=conditions, page=int(data['page'])))
+        print("CONDITIONS", conditions.__dict__)
+        books = db.get_books(conditions=conditions, page=int(data['page']))
+        # print(books)
+        return books
     else:
         return json.dumps("ERR Content type is not supported.")
 

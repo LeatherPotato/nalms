@@ -351,7 +351,7 @@ textarea:focus {
     cursor: pointer;
 }
 
-#objectFilters {
+.objectFilters {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;

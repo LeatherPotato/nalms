@@ -26,7 +26,7 @@ class Home extends React.Component {
 
   setUserId = (returnedUserId) => {
     Cookies.set("USER_ID", returnedUserId, { expires: 1 / 24 });
-    this.setState();
+    this.setState({loggedIn:true});
     // Created a cookie that will expire in one hour for USER_ID
   };
 

@@ -93,9 +93,9 @@ class Database:
             FULL OUTER JOIN PUBLISHERS ON BOOK_DATA.PublisherId = PUBLISHERS.PublisherId
             FULL OUTER JOIN GENRES ON BOOK_DATA.GenreId = GENRES.GenreId
             WHERE { "BOOK_DATA.ISBN=?"if not conditions.isbn == -1 else "BOOK_DATA.ISBN!=?" } AND 
-            {"BOOK_DATA.Title=?" if not conditions.title == '' else "BOOK_DATA.Title!=?"} AND 
+            {"BOOK_DATA.Title LIKE ?" if not conditions.title == '' else "BOOK_DATA.Title!=?"} AND 
             { "BOOKS.Availability=?"if not conditions.availability == -1 else "BOOKS.Availability!=?" } AND 
-            {"BOOKS_DATA.GenreId=?"if not conditions.genreId == -1 else "BOOK_DATA.GenreId!=?"}
+            {"BOOK_DATA.GenreId=?"if not conditions.genreId == -1 else "BOOK_DATA.GenreId!=?"}
             {f"ORDER BY {conditions.sortBy} {"ASC" if conditions.ascending==True else "DESC"}" if not conditions.sortBy == None else ""}
             LIMIT 30 OFFSET {30*(page-1)}""", 
             (conditions.isbn, conditions.title, conditions.availability, conditions.genreId)).fetchall()

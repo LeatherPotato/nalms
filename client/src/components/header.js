@@ -2,7 +2,7 @@ const Header = () => {
   return (
     <header>
       <a href="/">
-          <h1>NEA Project</h1>
+          <h1>St-Ambrose College Library</h1>
       </a>
       <a href="/">
         <span className="material-symbols-outlined iconButton icon">library_books</span>

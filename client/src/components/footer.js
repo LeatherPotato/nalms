@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <footer class="footer">
-    <h3>NEA Project</h3>
+    <h3>St-Ambrose College Library</h3>
     <span>FAQ</span>
     <span>Terms of service</span>
     <span>Account</span>
