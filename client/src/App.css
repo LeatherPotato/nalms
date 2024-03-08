@@ -208,6 +208,11 @@ main {
     padding: 0.5rem;
 }
 
+form * {
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+}
+
 input,
 select,
 textarea,
@@ -216,6 +221,10 @@ button {
     background-color: var(--background);
     border-radius: 0;
     padding: 0.3rem;
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+    margin-top: 0.1rem;
+    margin-bottom: 0.1rem;
 }
 
 input:focus,

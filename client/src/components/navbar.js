@@ -17,8 +17,8 @@ const navbar_names_routes = [
   ],
   [
     ["Search", "/catalogue#catalogueSearchElement"],
-    ["Manage", "/catalogue#catalogueManageElement"],
-    ["Locate", "/catalogue#catalogueLocateElement"],
+    ["Create", "/catalogue#catalogueCreateElement"],
+    ["Delete", "/catalogue#catalogueDeleteElement"],
   ],
   [
     ["Preferences", "/account#accountPreferencesElement"],

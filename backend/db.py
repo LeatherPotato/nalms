@@ -24,11 +24,12 @@ class Database:
 
     def delete_row(self, table: str, conditions: list):
         # TODO FIX DELETE FUNCTION: IT IS CURRENTLY A VULNERABILITY
-        self.cur.execute(f"DELETE FROM ? WHERE {",".join(conditions)}""", (table,))
+        print(table, conditions)
+        self.cur.execute(f"DELETE FROM {table} WHERE {",".join(conditions)}""")
         self.con.commit()
         
     def check_user_permissions(self, userId, action : int):
-        creatorPerms = self.cur.execute("""SELECT Permissions FROM USERS WHERE UserId=?""", (userId,)).fetchone()
+        creatorPerms = self.cur.execute("""SELECT Permissions FROM USERS WHERE UserId=?""", (userId,)).fetchone()['Permissions']
         return action <= int(creatorPerms, 2)
         # will add user permission checking to all of flask code
 
@@ -79,7 +80,7 @@ class Database:
             FULL OUTER JOIN AUTHORS ON BOOK_DATA.AuthorId = AUTHORS.AuthorId
             FULL OUTER JOIN PUBLISHERS ON BOOK_DATA.PublisherId = PUBLISHERS.PublisherId
             FULL OUTER JOIN GENRES ON BOOK_DATA.GenreId = GENRES.GenreId
-            WHERE BOOKS.BookId!=?""", (bookId,)).fetchall()
+            WHERE BOOKS.BookId=?""", (bookId,)).fetchall()
         return book
     
     def get_books(self, conditions: BookConditions, page : int):

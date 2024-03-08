@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
 import GLOBALS from "../Global";
+import BookElement from "./book_element";
 
 // let searchConditions = {
 //   isbn: -1,
@@ -14,102 +15,102 @@ import GLOBALS from "../Global";
 
 let LastSelectedGenre = null;
 
-const BookElement = (props) => {
-  // let showExtra = false;
-  const [showExtra, setShowExtra] = useState(false);
-  const {
-    bookId,
-    availability,
-    isbn,
-    title,
-    genreName,
-    publicationDate,
-    description,
-    coverImage,
-    authorName,
-    publisherName,
-  } = props;
+// const BookElement = (props) => {
+//   // let showExtra = false;
+//   const [showExtra, setShowExtra] = useState(false);
+//   const {
+//     bookId,
+//     availability,
+//     isbn,
+//     title,
+//     genreName,
+//     publicationDate,
+//     description,
+//     coverImage,
+//     authorName,
+//     publisherName,
+//   } = props;
 
-  return (
-    <div
-      className={"listObject"
-        .concat(availability == 1 ? " bookAvailable" : " bookUnavailable")
-        .concat(showExtra === true ? " objectShowExtra" : " objectHideExtra")}
-    >
-      <img src={coverImage} className="listObjectPic" alt="Cover Unavailable" />
-      <div className="listObjectInfo">
-        <h3 className="listObjectName">{title}</h3>
-        <span>{authorName}</span>
-        <span>{genreName}</span>
-        <span>
-          Actions
-          <span
-            class="material-symbols-outlined iconButton"
-            onClick={() => {
-              navigator.clipboard.writeText(bookId);
-              //   https://stackoverflow.com/questions/39501289/in-reactjs-how-to-copy-text-to-clipboard
-              // USED THIS THREAD
-            }}
-          >
-            content_copy
-          </span>
-          {showExtra === false ? (
-            <span
-              class="material-symbols-outlined iconButton"
-              onClick={() => {
-                setShowExtra(true);
-              }}
-            >
-              expand_more
-            </span>
-          ) : (
-            <span
-              class="material-symbols-outlined iconButton"
-              onClick={() => {
-                setShowExtra(false);
-              }}
-            >
-              expand_less
-            </span>
-          )}
-        </span>
-        {showExtra === true ? <span>ISBN: {isbn}</span> : ""}
-        {showExtra === true ? (
-          <span>
-            {publisherName}, <i>{publicationDate}</i>
-          </span>
-        ) : (
-          ""
-        )}
-        {showExtra === true ? (
-          <span className="objectDescription">{description}</span>
-        ) : (
-          ""
-        )}
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div
+//       className={"listObject"
+//         .concat(availability == 1 ? " bookAvailable" : " bookUnavailable")
+//         .concat(showExtra === true ? " objectShowExtra" : " objectHideExtra")}
+//     >
+//       <img src={coverImage} className="listObjectPic" alt="Cover Unavailable" />
+//       <div className="listObjectInfo">
+//         <h3 className="listObjectName">{title}</h3>
+//         <span>{authorName}</span>
+//         <span>{genreName}</span>
+//         <span>
+//           Actions
+//           <span
+//             class="material-symbols-outlined iconButton"
+//             onClick={() => {
+//               navigator.clipboard.writeText(bookId);
+//               //   https://stackoverflow.com/questions/39501289/in-reactjs-how-to-copy-text-to-clipboard
+//               // USED THIS THREAD
+//             }}
+//           >
+//             content_copy
+//           </span>
+//           {showExtra === false ? (
+//             <span
+//               class="material-symbols-outlined iconButton"
+//               onClick={() => {
+//                 setShowExtra(true);
+//               }}
+//             >
+//               expand_more
+//             </span>
+//           ) : (
+//             <span
+//               class="material-symbols-outlined iconButton"
+//               onClick={() => {
+//                 setShowExtra(false);
+//               }}
+//             >
+//               expand_less
+//             </span>
+//           )}
+//         </span>
+//         {showExtra === true ? <span>ISBN: {isbn}</span> : ""}
+//         {showExtra === true ? (
+//           <span>
+//             {publisherName}, <i>{publicationDate}</i>
+//           </span>
+//         ) : (
+//           ""
+//         )}
+//         {showExtra === true ? (
+//           <span className="objectDescription">{description}</span>
+//         ) : (
+//           ""
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
 
-const genreOptions = (genres) => {
-  console.log("GENRE OPTIONS FUNCT START")
-  // console.log(genres)
-  let returnGenreOptions = [<option value={-1}>ANY</option>];
-  for (let index = 0; index < genres.length; index++) {
-    let genre = genres[index]
-    // console.log(genre)
-    returnGenreOptions.push(<option value={genre.GenreId}>{genre.GenreName}</option>)
-  }
-  // console.log(returnGenreOptions)
-  // console.log("GENRE OPTIONS FUNCT END")
-  return returnGenreOptions;
-}
+// const genreOptions = (genres) => {
+//   console.log("GENRE OPTIONS FUNCT START")
+//   // console.log(genres)
+//   let returnGenreOptions = [<option value={-1}>ANY</option>];
+//   for (let index = 0; index < genres.length; index++) {
+//     let genre = genres[index]
+//     // console.log(genre)
+//     returnGenreOptions.push(<option value={genre.GenreId}>{genre.GenreName}</option>)
+//   }
+//   // console.log(returnGenreOptions)
+//   // console.log("GENRE OPTIONS FUNCT END")
+//   return returnGenreOptions;
+// }
 // ISSUE: this returns nothing because genres is still a promise while fetching data, instead of an array of genres
 // used this stackoverflow thread to only render the BookSearchElement component after data is fetched from server
 // https://stackoverflow.com/questions/73420440/how-do-i-render-a-react-component-only-after-a-state-is-set
 // and then this stackoverflow thread to pass the genres as a prop into BookSearchElement
 
-class BookSearchElementIntermediary extends React.Component {
+class BookSearchElement extends React.Component {
   // https://legacy.reactjs.org/docs/forms.html
   // USED REACT DOCUMENTATON TO CREATE FORM
   constructor(props) {
@@ -122,7 +123,7 @@ class BookSearchElementIntermediary extends React.Component {
       availability: -1,
       genreId: -1,
       ascending: true,
-      page: 1,
+      page: 0,
       // end search conditions
       books: {},
       bookElements: [],
@@ -170,9 +171,9 @@ class BookSearchElementIntermediary extends React.Component {
         }
         this.setState({ bookElements: newBookElements });
         console.log("BOOK ELEMENTS");
-        console.log(this.setState.bookElements);
+        console.log(this.state.bookElements);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => alert(err));
   };
 
   handleChanges = (e) => {
@@ -231,26 +232,26 @@ class BookSearchElementIntermediary extends React.Component {
 }
 
 
-const BookSearchElement = () => {
-  const [genres, setGenres] = useState(undefined)
+// const BookSearchElement = () => {
+//   const [genres, setGenres] = useState(undefined)
   
-  useEffect(async () => {
-    // const fetchedData = await getDataFromServer()
-    // setData(fetchedData)
-    fetch(GLOBALS.serverURL.concat("/get_genres/"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ genreName: "", page: 0 }),
-    })
-      .then((response) => response.json())
-      .then((data) => setGenres(genreOptions(data)))
-  }, [])
+//   useEffect(async () => {
+//     // const fetchedData = await getDataFromServer()
+//     // setData(fetchedData)
+//     fetch(GLOBALS.serverURL.concat("/get_genres/"), {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ genreName: "", page: 0 }),
+//     })
+//       .then((response) => response.json())
+//       .then((data) => setGenres(genreOptions(data)))
+//   }, [])
 
-  return (
-    <div>
-      {genres ? <BookSearchElementIntermediary genres={genres} /> : <p>Loading...</p>}
-    </div>
-  )
-}
+//   return (
+//     <div>
+//       {genres ? <BookSearchElementIntermediary genres={genres} /> : <p>Loading...</p>}
+//     </div>
+//   )
+// }
 
 export default BookSearchElement;

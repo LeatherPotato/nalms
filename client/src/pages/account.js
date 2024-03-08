@@ -19,7 +19,7 @@ const Preferences = () => {
     fetch(GLOBALS.serverURL.concat("/get_user/"), UserInfoRequestOptions)
       .then((response) => response.json())
       .then((data) => setUserData(data))
-      .catch((err) => console.log(err));
+      .catch((err) => alert(err));
   }, []);
   console.log(userData);
 
@@ -87,7 +87,7 @@ const Notifications = () => {
   //   fetch(GLOBALS.serverURL.concat("/get_notifications/"), NotificationsRequestOptions)
   //     .then((response) => response.json())
   //     .then((data) => setNofications(data))
-  //     .catch((err) => console.log(err));
+  //     .catch((err) => alert(err));
   // }, []);
   // console.log(notifications);
   // TODO: RENDER WHEN YOU HAVE CREATED SOME NOTIFICATIONS.

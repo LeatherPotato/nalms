@@ -56,9 +56,9 @@ class BookConditions:
         self.ascending = ascending
     
     
-    genreId = -1
-    sortBy = None
-    ascending = True
+    # genreId = -1
+    # sortBy = None
+    # ascending = True
 
 class UserConditions:
     def __init__(self, schoolYear = -1, firstName = '', lastName = '', username='', sortBy = None, ascending = True):

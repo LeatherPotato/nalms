@@ -2,7 +2,7 @@ import isbnlib
 import hashlib
 
 def convert_isbn(inputISBN):
-    if isbnlib.is_isbn10(inputISBN):
+    if isbnlib.is_isbn10(str(inputISBN)):
         isbn10_list = list(inputISBN)[:-1] 
         # converts isbn into list, then removes the checksum which will be added at the end
         isbn10_list = ['9', '7', '8', '-'] + isbn10_list
