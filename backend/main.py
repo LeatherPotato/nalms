@@ -239,7 +239,8 @@ def borrow_book():
             userId = data['borrowerId']
             if db.availability_book(bookId=bookId):
                 db.edit_hold_request(bookId=bookId, userId=userId, status=0)
-                db.borrow_book(userId=userId, bookId=bookId)
+                borrowStatus = db.borrow_book(userId=userId, bookId=bookId)
+                return json.dumps(borrowStatus)
             else:
                 return json.dumps("ERR Book Unavailable"), 418
         else:
@@ -256,8 +257,9 @@ def return_book():
             userId = data['borrowerId']
             if not db.availability_book(bookId=bookId):
                 db.return_book(userId=userId, bookId=bookId)
+                return json.dumps("SUCCESS Book Returned!")
             else:
-                return json.dumps("ERR Book Not Borrowed"), 418
+                return json.dumps("ERR Book Not Returned As Book Was Not Borrowed"), 418
         else:
             return json.dumps("ERR Missing Permissions"), 418
     else:

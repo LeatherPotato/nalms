@@ -53,7 +53,7 @@ class Database:
 
     def borrow_book(self, userId, bookId: int):
         availability = self.cur.execute(
-            """SELECT Availability FROM BOOKS WHERE BookId=?""", (bookId,))
+            """SELECT Availability FROM BOOKS WHERE BookId=?""", (bookId,)).fetchone()["Availability"]
         if availability == 1:
             time = self.datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
             self.cur.execute(
@@ -71,11 +71,12 @@ class Database:
             """UPDATE BORROWS SET DateReturned=? WHERE UserId=? and BookId=?""", (time, userId, bookId))
         self.cur.execute(
             """UPDATE BOOKS SET Availability=1 WHERE BookId=?""", (bookId,))
+        return "Book Returned"
         self.con.commit()
 
     def availability_book(self, bookId):
         availability = self.cur.execute(
-            """SELECT Availability FROM BOOKS WHERE BookId=?""", (bookId,)).fetchone()
+            """SELECT Availability FROM BOOKS WHERE BookId=?""", (bookId,)).fetchone()["Availability"]
         return availability
 
     def get_book(self, bookId: int):

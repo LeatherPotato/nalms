@@ -52,13 +52,246 @@ const BookSearchElementWithGenres = () => {
 };
 
 class Borrowing extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      // state for borrowing a book
+      borrowUserId: -1,
+      borrowBookId: -1,
+      borrowBook: {},
+      borrowUser: {},
+
+      // state for hold returning a book
+      returnUserId: -1,
+      returnBookId: -1,
+      returnBook: {},
+      returnUser: {},
+    };
+  }
+
+  handleBorrowBook = (e) => {
+    e.preventDefault();
+    if (
+      this.state.borrowBookId === -1 ||
+      this.state.borrowUserId === -1
+    ) {
+      alert("ERROR: DATA NOT ENTERED CORRECTLY");
+    } else {
+      let holdRequestCreateOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderUserId: Cookies.get("USER_ID"),
+          borrowerId: this.state.borrowUserId,
+          bookId: this.state.borrowBookId,
+        }),
+      };
+      fetch(
+        GLOBALS.serverURL.concat("/borrow_book/"),
+        holdRequestCreateOptions
+      )
+        .then((response) => response.json())
+        .then((data) => alert(data))
+        .catch((err) => alert(err));
+    }
+  };
+
+  handleReturnBook = (e) => {
+    e.preventDefault();
+    if (
+      this.state.borrowBookId === -1 ||
+      this.state.returnUserId === -1
+    ) {
+      alert("ERROR: DATA NOT ENTERED CORRECTLY");
+    } else {
+      let holdRequestCreateOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderUserId: Cookies.get("USER_ID"),
+          borrowerId: this.state.returnUserId,
+          bookId: this.state.returnBookId,
+        }),
+      };
+      fetch(
+        GLOBALS.serverURL.concat("/return_book/"),
+        holdRequestCreateOptions
+      )
+        .then((response) => response.json())
+        .then((data) => alert(data))
+        .catch((err) => alert(err));
+    }
+  };
+
+  handleChanges = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    this.setState({ [name]: value === "" ? -1 : value });
+    // validation in line above: needed to check if the user inputted a value before sending it off, otherwise, it resets to -1
+    // need to check of the value is not null so that it doesnt try to get a book or user with an empty id and refresh, meaning it only refreshes the book or user element when a new valid id is added
+    if (name === "borrowBookId" && value !== "") {
+      let GetBookRequestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookId: value,
+        }),
+      };
+      fetch(GLOBALS.serverURL.concat("/get_book/"), GetBookRequestOptions)
+        .then((response) => response.json())
+        .then((data) => this.setState({ borrowBook: data[0] }))
+        // .then(console.log(this.state))
+        .catch((err) => {
+          this.setState({ borrowBook: {} });
+        });
+    } else if (name === "returnBookId" && value !== "") {
+      let GetBookRequestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookId: value,
+        }),
+      };
+      fetch(GLOBALS.serverURL.concat("/get_book/"), GetBookRequestOptions)
+        .then((response) => response.json())
+        .then((data) => this.setState({ returnBook: data[0] }))
+        .catch((err) => {
+          this.setState({ book: {} });
+        });
+    } else if (name === "borrowUserId" && value !== "") {
+      let GetBookRequestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: value,
+        }),
+      };
+      fetch(GLOBALS.serverURL.concat("/get_user/"), GetBookRequestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          this.setState({ borrowUser: data });
+        })
+        // .then(console.log(this.state))
+        .catch((err) => {
+          this.setState({ borrowUser: {} });
+        });
+    } else if (name === "returnUserId" && value !== "") {
+      let GetBookRequestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: value,
+        }),
+      };
+      fetch(GLOBALS.serverURL.concat("/get_user/"), GetBookRequestOptions)
+        .then((response) => response.json())
+        .then((data) => this.setState({ returnUser: data }))
+        .catch((err) => {
+          this.setState({ book: {} });
+        });
+    }
+  };
+
   render() {
     return (
-      <div id="cicrulationBorrowingElement">
-        <h1>Borrowing Element</h1>
-        {/* so basically you want to make a form here to get the books borrowed by userid and bookid, pick one, and then either return or borrow it. that last bit should be done with a ternary operator */}
-        <h2 class="subtitle">Borrow</h2>
-        <h2 class="subtitle">Return</h2>
+      <div id="circulationBorrowingElement">
+        <h1>Borrowing</h1>
+        <h2 class="subtitle">Borrow Book</h2>
+        {/* create hold request form */}
+        <form onSubmit={this.handleBorrowBook}>
+          <input
+            type="text"
+            name="borrowUserId"
+            placeholder="User Id"
+            onChange={this.handleChanges}
+          />
+          <input
+            type="text"
+            name="borrowBookId"
+            placeholder="Book Id"
+            onChange={this.handleChanges}
+          />
+          <button name="submitButton">Borrow!</button>
+        </form>
+        {this.state.borrowBookId !== -1 ? (
+          // this displays the book if it has been retrieved, otherwise, it wont display anything since the book is still its initial value (an empty object {})
+          <BookElement
+            bookId={this.state.borrowBook["BookId"]}
+            availability={this.state.borrowBook["Availability"]}
+            isbn={this.state.borrowBook["ISBN"]}
+            title={this.state.borrowBook["Title"]}
+            description={this.state.borrowBook["Description"]}
+            genreName={this.state.borrowBook["GenreName"]}
+            authorName={this.state.borrowBook["AuthorName"]}
+            publisherName={this.state.borrowBook["PublisherName"]}
+            publicationDate={this.state.borrowBook["PublicationDate"]}
+            coverImage={this.state.borrowBook["CoverImage"]}
+          />
+        ) : (
+          ""
+        )}
+        {this.state.borrowUserId !== -1 ? (
+          // this displays the user if it has been retrieved, otherwise, it wont display anything since the user is still its initial value (an empty object {})
+          <UserElement
+            userId={this.state.borrowUser["UserId"]}
+            username={this.state.borrowUser["Username"]}
+            schoolYear={this.state.borrowUser["Schoolyear"]}
+            firstName={this.state.borrowUser["FirstName"]}
+            lastName={this.state.borrowUser["LastName"]}
+            permissions={this.state.borrowUser["Permission"]}
+            email={this.state.borrowUser["Email"]}
+          />
+        ) : (
+          ""
+        )}
+        <h2>Return Book</h2>
+        {/* delete hold requestform */}
+        <form onSubmit={this.handleReturnBook}>
+          <input
+            type="text"
+            name="returnUserId"
+            placeholder="User Id"
+            onChange={this.handleChanges}
+          />
+          <input
+            type="text"
+            name="returnBookId"
+            placeholder="Book Id"
+            onChange={this.handleChanges}
+          />
+          <button name="submitButton">Return!</button>
+        </form>
+        {this.state.returnBookId !== -1 ? (
+          // this displays the book if it has been retrieved, otherwise, it wont display anything since the book is still its initial value (an empty object {})
+          <BookElement
+            bookId={this.state.returnBook["BookId"]}
+            availability={this.state.returnBook["Availability"]}
+            isbn={this.state.returnBook["ISBN"]}
+            title={this.state.returnBook["Title"]}
+            description={this.state.returnBook["Description"]}
+            genreName={this.state.returnBook["GenreName"]}
+            authorName={this.state.returnBook["AuthorName"]}
+            publisherName={this.state.returnBook["PublisherName"]}
+            publicationDate={this.state.returnBook["PublicationDate"]}
+            coverImage={this.state.returnBook["CoverImage"]}
+          />
+        ) : (
+          ""
+        )}
+        {this.state.returnUserId !== -1 ? (
+          // this displays the user if it has been retrieved, otherwise, it wont display anything since the user is still its initial value (an empty object {})
+          <UserElement
+            userId={this.state.returnUser["UserId"]}
+            username={this.state.returnUser["Username"]}
+            schoolYear={this.state.returnUser["Schoolyear"]}
+            firstName={this.state.returnUser["FirstName"]}
+            lastName={this.state.returnUser["LastName"]}
+            permissions={this.state.returnUser["Permission"]}
+            email={this.state.returnUser["Email"]}
+          />
+        ) : (
+          ""
+        )}
       </div>
     );
   }
@@ -68,7 +301,7 @@ const Lates = () => {
   return (
     <div id="circulationLatesElement">
       <h1>Lates Element</h1>
-      <p>content goes here</p>
+      <p>TODO: Write Back-end code to make this element.</p>
     </div>
   );
 };
