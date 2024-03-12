@@ -328,12 +328,12 @@ textarea:focus {
     padding: 0;
 }
 
-.availableBook {
-    
+.bookAvailable {
+    background-color: #d5ebff;
 }
 
-.unavailableBook {
-
+.bookUnavailable {
+    background-color: #ffe2e2;
 }
 
 .objectShowExtra {

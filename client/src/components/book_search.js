@@ -124,6 +124,7 @@ class BookSearchElement extends React.Component {
       genreId: -1,
       ascending: true,
       page: 0,
+      bookId: -1,
       // end search conditions
       books: {},
       bookElements: [],
@@ -143,6 +144,7 @@ class BookSearchElement extends React.Component {
         ascending: this.state.ascending,
         page: this.state.page,
         sortBy: null,
+        bookId: this.state.bookId
       }),
     };
     fetch(GLOBALS.serverURL.concat("/get_books/"), GetBooksRequestOptions)
@@ -177,9 +179,19 @@ class BookSearchElement extends React.Component {
   };
 
   handleChanges = (e) => {
+        // VALIDATION
+    // ensured that the isbn and bookId fields are -1 if the inputs are empty, so that the database correctly selects the intended data
+    // they are integers in my backend and i have them set to -1 by default for the searching in my database
     e.preventDefault()
     const { name, value } = e.target;
-    this.setState({ [name]: value });
+    // this.setState({ [name]: value });
+    if (name === "isbn" && value === "") {
+        this.setState({ [name]: -1 });
+      } else if (name === "bookId" && value === "") {
+        this.setState({ [name]: -1 });
+      } else {
+        this.setState({ [name]: value });
+      }
     console.log(name, value);
   };
 
@@ -192,11 +204,10 @@ class BookSearchElement extends React.Component {
         <h2 class="subtitle">Filters</h2>
         <div className="objectFilters">
           <form onSubmit={this.handleSubmit}>
-            <label for="title">Title</label>
-            <input type="text" name="title" onChange={this.handleChanges} />
-            <label for="isbn">ISBN</label>
-            <input type="text" name="isbn" onChange={this.handleChanges} />
-            <label for="availability">Avaialble</label>
+            <input type="text" name="title" onChange={this.handleChanges} placeholder="Title"/>
+            <input type="text" name="isbn" onChange={this.handleChanges}  placeholder="ISBN"/>
+            <input type="number" name="bookId" onChange={this.handleChanges} placeholder="BookId"/>
+            <label htmlFor="availability">Avaialble</label>
             <select
               name="availability"
               id=""
@@ -207,7 +218,7 @@ class BookSearchElement extends React.Component {
               <option value="1">yes</option>
               <option value="0">no</option>
             </select>
-            <label for="">Genre</label>
+            <label htmlFor="">Genre</label>
             <select 
               value={this.state.genreId} 
               onChange={this.handleChanges} 

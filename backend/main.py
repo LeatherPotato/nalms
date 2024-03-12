@@ -117,7 +117,7 @@ def get_user():
         userId=data.get('userId')
         # print(userId)
         userData = db.get_user(userId=int(userId))
-        # print(userData)
+        print(userData)
         return userData
     else:
         return json.dumps("ERR Content type is not supported."), 418
@@ -132,8 +132,12 @@ def get_users():
             lastName=data['lastName'],
             username=data['username'],
             sortBy=data['sortBy'],
-            ascending=data['ascending'])
-        return json.dumps(db.get_users(conditions=conditions, page=data['page']))
+            ascending=data['ascending'],
+            userId=data['userId'])
+        users=db.get_users(conditions=conditions, page=data['page'])
+        print(conditions.__dict__)
+        # print(users)
+        return json.dumps(users)
     else:
         return json.dumps("ERR Content type is not supported."), 418
 
@@ -215,7 +219,8 @@ def get_books():
             availability=int(data['availability']),
             genreId=int(data['genreId']),
             sortBy=data['sortBy'],
-            ascending=data['ascending'])
+            ascending=data['ascending'],
+            bookId=data['bookId'])
         print("CONDITIONS", conditions.__dict__)
         books = db.get_books(conditions=conditions, page=int(data['page']))
         # print(books)
@@ -258,12 +263,14 @@ def return_book():
     else:
         return json.dumps("ERR Content type is not supported."), 418
 
-@app.route('/api/creat_hold_request/', methods=["GET", "POSTo"])
+@app.route('/api/create_hold_request/', methods=["GET", "POST"])
 def creat_hold_request():
     if request.is_json:
+        print(request)
         data = request.json
+        print(data)
         if db.check_user_permissions(userId=data['senderUserId'], action=1):
-            db.create_hold_request(bookId=data['bookId'], userId=data['senderUserId'])
+            db.create_hold_request(bookId=data['bookId'], userId=data['userId'])
             return json.dumps("SUCCESS Created Hold Request!")
         else:
             return json.dumps("ERR Missing Permissions"), 418
@@ -275,7 +282,7 @@ def remove_hold_request():
     if request.is_json:
         data = request.json
         if db.check_user_permissions(userId=data['senderUserId'], action=1):
-            db.edit_hold_request(bookId=data['bookId'], userId=data['senderUserId'], status=0)
+            db.edit_hold_request(bookId=data['bookId'], userId=data['userId'], status=0)
             return json.dumps("SUCCESS Hold Request Removed")
         else:
             return json.dumps("ERR Missing Permissions"), 418

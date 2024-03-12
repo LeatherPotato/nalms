@@ -47,13 +47,14 @@ class User:
         self.email = email
 
 class BookConditions:
-    def __init__(self , isbn = -1, title = '', availability = -1, genreId = -1, sortBy = None, ascending = True):
+    def __init__(self , isbn = -1, title = '', availability = -1, genreId = -1, sortBy = None, ascending = True, bookId=1):
         self.isbn = isbn
         self.title = title + ('%s' if not title == '' else '')
         self.availability = availability
         self.genreId = genreId
         self.sortBy = sortBy
         self.ascending = ascending
+        self.bookId = bookId
     
     
     # genreId = -1
@@ -61,11 +62,12 @@ class BookConditions:
     # ascending = True
 
 class UserConditions:
-    def __init__(self, schoolYear = -1, firstName = '', lastName = '', username='', sortBy = None, ascending = True):
+    def __init__(self, schoolYear = -1, firstName = '', lastName = '', username='', sortBy = None, ascending = True, userId = -1):
         self.schoolYear = schoolYear
-        self.firstName = firstName + ('%s' if not firstName == '' else '')
-        self.lastName = lastName + ('%s' if not lastName == '' else '')
-        self.username = username + ('%s' if not username == '' else '')
+        self.firstName = firstName
+        self.lastName = lastName
+        self.username = username
         self.sortBy = sortBy
         self.ascending = ascending
+        self.userId = userId
 

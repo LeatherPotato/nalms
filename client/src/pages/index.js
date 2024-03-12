@@ -62,7 +62,7 @@ class Home extends React.Component {
               <h2>Login</h2>
               <form onSubmit={this.handleSubmit} class="form">
                 <div class="form-input">
-                  <label for="username">Username</label>
+                  <label htmlFor="username">Username</label>
                   <input
                     type="text"
                     name="username"
@@ -71,7 +71,7 @@ class Home extends React.Component {
                   />
                 </div>
                 <div class="form-input">
-                  <label for="password">Password</label>
+                  <label htmlFor="password">Password</label>
                   <input
                     type="password"
                     name="password"

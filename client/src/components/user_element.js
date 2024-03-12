@@ -1,73 +1,59 @@
-import React, { useState, useEffect } from "react";
-import "../App.css";
-import GLOBALS from "../Global";
-import BookElement from "./book_element";
+import React, { useState } from "react";
+import defaultProfilePic from "../images/defaultProfilePic.png";
 
-class UserSearchElement extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      searched: false,
-      page: 0,
-      users: {},
-      userElements: [],
-      // USER SEARCH CONDITIONS:
-      schoolYear: -1,
-      firstName: "",
-      lastName: "",
-      username: ""
-    };
-  }
+const UserElement = (props) => {
+  // let showExtra = false;
+  const [showExtra, setShowExtra] = useState(false);
+  const {
+    userId,
+    username,
+    schoolYear,
+    firstName,
+    lastName,
+    permissions,
+    email,
+  } = props;
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    let GetUsersRequest = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        schoolYear: this.state.schoolYear,
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        username: this.state.username
-      })
-    }
-    fetch(GLOBALS.serverURL.concat("/get_users/"), GetUsersRequest)
-    .then((response) => response.json())
-      .then((data) => this.setState({ users: data }))
-      .then(this.setState({ searched: true }))
-      .then(console.log(this.state.users))
-      .then(() => {
-        let newUserElements = [];
-        for (let index = 0; index < this.state.users.length; index++) {
-          let user = this.state.users[index];
-          newUserElements.push(
-            // USER ELEMENT
-          )
-        }
-        this.setState({userElements: newUserElements})
-        console.log("USER ELEMENTS");
-        console.log(this.state.userElements)
-    })
-      // .then(() => {
-      //   let newBookElements = [];
-      //   for (let index = 0; index < this.state.books.length; index++) {
-      //     let book = this.state.books[index];
-      //     newBookElements.push(
-      //       <BookElement
-      //         bookId={book["BookId"]}
-      //         availability={book["Availability"]}
-      //         isbn={book["ISBN"]}
-      //         title={book["Title"]}
-      //         description={book["Description"]}
-      //         genreName={book["GenreName"]}
-      //         authorName={book["AuthorName"]}
-      //         publisherName={book["PublisherName"]}
-      //         publicationDate={book["PublicationDate"]}
-      //         coverImage={book["CoverImage"]}
-      //       />
-      //     ));
-        .catch((err) => alert(err));
-  }
-}
+  return (
+    <div
+      className="listObject"
+    >
+      <img
+        src={defaultProfilePic}
+        className="listObjectPic"
+        alt="User Profile Pic Unavailable"
+      />
+      <div className="listObjectInfo">
+        <h3 className="listObjectName">
+          {firstName} {lastName}
+        </h3>
+        <span>
+          {username}, {email}
+        </span>
+        <span>Permissions {permissions}</span>
+        <span>Year {schoolYear}</span>
+        <span>
+          Copy UserId, Email
+          <span
+            class="material-symbols-outlined iconButton"
+            onClick={() => {
+              navigator.clipboard.writeText(userId);
+            }}
+          >
+            content_copy
+          </span>
+          <span
+            class="material-symbols-outlined iconButton"
+            onClick={() => {
+              navigator.clipboard.writeText(email);
+            }}
+          >
+            content_copy
+          </span>
+        </span>
+      </div>
+    </div>
+  );
+};
 
-export default UserSearchElement;
+export default UserElement;
