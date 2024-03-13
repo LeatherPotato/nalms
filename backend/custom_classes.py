@@ -47,7 +47,8 @@ class User:
         self.email = email
 
 class BookConditions:
-    def __init__(self , isbn = -1, title = '', availability = -1, genreId = -1, sortBy = None, ascending = True, bookId=1):
+    def __init__(self , isbn = -1, title = '', availability = -1, genreId = -1, sortBy = None, ascending = True, bookId=-1):
+        # integers the default value -1, and strings have the default value of am empty string. do not edit these as i use them in db.py to either select entries with that value or ones without 
         self.isbn = isbn
         self.title = title + ('%s' if not title == '' else '')
         self.availability = availability
@@ -56,13 +57,9 @@ class BookConditions:
         self.ascending = ascending
         self.bookId = bookId
     
-    
-    # genreId = -1
-    # sortBy = None
-    # ascending = True
-
 class UserConditions:
     def __init__(self, schoolYear = -1, firstName = '', lastName = '', username='', sortBy = None, ascending = True, userId = -1):
+        # integers the default value -1, and strings have the default value of am empty string. do not edit these as i use them in db.py to either select entries with that value or ones without 
         self.schoolYear = schoolYear
         self.firstName = firstName
         self.lastName = lastName

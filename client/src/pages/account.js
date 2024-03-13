@@ -94,7 +94,13 @@ const Notifications = () => {
   return (
     <div id="accountNotificationsElement">
       <h1>Notifications</h1>
-      <p>TODO: RENDER NOTIFICATIONS WHEN YOU HAVE CREATED SOME NOTIFICATIONS.</p>
+      <p>
+        TODO: RENDER NOTIFICATIONS WHEN YOU HAVE CREATED SOME NOTIFICATIONS.
+      </p>
+      <p>
+        WRITE THIS AFTER YOU HAVE CREATED YOUR LATES ELEMENT, AS THAT IS WHAT
+        NOTIFICATIONS ARE FOR
+      </p>
     </div>
   );
 };

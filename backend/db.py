@@ -33,9 +33,13 @@ class Database:
         creatorPerms = self.cur.execute(
             """SELECT Permissions FROM USERS WHERE UserId=?""", (userId,)).fetchone()['Permissions']
         return action <= int(creatorPerms, 2)
-        # will add user permission checking to all of flask code
+        # TODO: will add user permission checking to all of flask code
+        # todo complete!
 
     def create_book(self, Book: Book):
+        # checks a there is an entry in BOOK_DATA with that isbn, and makes it if it does not, and then inserts a book into BOOKS with that BookDataId
+        # this ensures the atomicity of the BOOK_DATA table as no 2 unique books will have the same isbn...
+        # ...and the same book will not have multiple unique ISBNs unless there is a difference in the the fields i have in my database.
         bookDataPk = self.cur.execute(
             """SELECT BookDataId FROM BOOK_DATA WHERE ISBN=?""", (Book.isbn,)).fetchone()
         if bookDataPk == None:
@@ -52,10 +56,14 @@ class Database:
         return bookId
 
     def borrow_book(self, userId, bookId: int):
+        # checks if book is available already, if it is, then itll send
         availability = self.cur.execute(
             """SELECT Availability FROM BOOKS WHERE BookId=?""", (bookId,)).fetchone()["Availability"]
         if availability == 1:
             time = self.datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
+            # gets the current time and data with strftime from the datetime module
+            # used this stackoverflow thread
+            # https://stackoverflow.com/questions/3316882/how-do-i-get-a-string-format-of-the-current-date-time-in-python
             self.cur.execute(
                 """INSERT OR REPLACE INTO BORROWS (UserId, BookId, DateBorrowed) VALUES (?, ?, ?)""", (userId, bookId, time))
             self.cur.execute(
@@ -67,6 +75,9 @@ class Database:
 
     def return_book(self, userId, bookId: int):
         time = self.datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
+        # gets the current time and data with strftime from the datetime module
+        # used this stackoverflow thread
+        # https://stackoverflow.com/questions/3316882/how-do-i-get-a-string-format-of-the-current-date-time-in-python
         self.cur.execute(
             """UPDATE BORROWS SET DateReturned=? WHERE UserId=? and BookId=?""", (time, userId, bookId))
         self.cur.execute(
@@ -83,6 +94,8 @@ class Database:
         # SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
         # FROM Orders
         # INNER JOIN Customers ON Orders.CustomerID=Customers.CustomerID;
+        
+        # i am using a full outer join to select all of the data from BOOk_DATA for a given book, as well as the availability and bookid 
         book = self.cur.execute(""" SELECT BOOKS.BookId, BOOKS.Availability, BOOK_DATA.ISBN, 
             BOOK_DATA.Title, BOOK_DATA.GenreId, BOOK_DATA.PublicationDate, BOOK_DATA.Description, 
             BOOK_DATA.CoverImage, AUTHORS.AuthorName, PUBLISHERS.PublisherName, GENRES.GenreName
@@ -95,7 +108,11 @@ class Database:
         return book
 
     def get_books(self, conditions: BookConditions, page: int):
-        # ran into operational error when writing this
+        # ran into operational error when writing this, fixed it by changing the syntax of my statement to match the sqlite documentation.
+
+        # i am using a full outer join to select all of the data from BOOk_DATA for a given book, as well as the availability and bookid 
+        # i am using book conditions and checking if its the default value to either the rows with any value (checking if it is not equal to a value that is not in the database)...
+        # ...or to select a value from the database with the value inputted by a user.
         books = self.cur.execute(f"""SELECT BOOKS.BookId, BOOKS.Availability, BOOK_DATA.ISBN, 
             BOOK_DATA.Title, BOOK_DATA.GenreId, BOOK_DATA.PublicationDate, BOOK_DATA.Description, 
             BOOK_DATA.CoverImage, AUTHORS.AuthorName, PUBLISHERS.PublisherName, GENRES.GenreName
@@ -116,6 +133,8 @@ class Database:
         return books
 
     def create_genre(self, genreName: str):
+        # checks if genre with that name already exists. if it does, then it doesnt create that one and just returns the genreId, otherwise it creates one and then it returns the genreId.
+        # this ensures data atomicitiy
         genreId = self.cur.execute(
             """SELECT GenreId FROM GENRES WHERE GenreName=?""", (genreName,)).fetchone()
         if genreId == None:
@@ -135,12 +154,15 @@ class Database:
         return genre
 
     def get_genres(self, genreName, page):
+        # gets all genres with either a specific name, or all genres whos name is the empty string (no genres in my database can be an empty string as it has the NOT NULL restraint)
         genres = self.cur.execute(f"""SELECT * FROM GENRES
             WHERE {"""GenreName!=?""" if genreName == '' else """GenreName=?"""}
             LIMIT 30 OFFSET {30*(page-1)}""", (genreName + ("" if genreName == "" else "%"),)).fetchall()
         return genres
 
     def create_author(self, authorName):
+        # checks if author with that name already exists. if it does, then it doesnt create that one and just returns the authorId, otherwise it creates one and then it returns the authorId.
+        # ensures data atomicity
         authorId = self.cur.execute(
             """SELECT AuthorId FROM AUTHORS WHERE AuthorName=?""", (authorName,)).fetchone()
         if authorId == None:
@@ -160,6 +182,7 @@ class Database:
         return author
 
     def get_authors(self, page: int, authorName=""):
+        # gets all authors with either a specific name, or all authors whos name is the empty string (no authors in my database can be an empty string as it has the NOT NULL restraint)
         authors = self.cur.execute(f"""SELECT * FROM AUTHORS
             WHERE {"""AuthorName=?""" if not authorName == '' else """AuthorName!=?"""}
             ORDER BY AuthorName ASC
@@ -167,6 +190,7 @@ class Database:
         return authors
 
     def create_publisher(self, publisherName):
+        # checks if the book has no publisher. if it doesnt, then it returns the genreId of the NONE publisher, otherwise, it creates a publisher with that name.
         if publisherName == '':
             return 0
         else:
@@ -193,7 +217,7 @@ class Database:
         return publishers
 
     def create_user(self, user: User):
-        # check user email is unique
+        # check username and email is unique
         retrievedUsername = self.cur.execute(
             """SELECT userId FROM USERS WHERE Email=?""", (user.email,)).fetchone()
         retrievedEmail = self.cur.execute(
@@ -223,6 +247,7 @@ class Database:
         self.con.commit()
 
     def update_username(self, newUsername, userId):
+        # checks if username is unique before editing it
         retrievedUsername = self.cur.execute(
             """SELECT userId FROM USERS WHERE Username=?""", (newUsername,)).fetchone()
         if retrievedUsername == None:
@@ -233,9 +258,10 @@ class Database:
         else:
             return "USERNAME_TAKEN"
 
-    def check_username_available(self, username: str) -> bool:
+    def check_username_available(self, username: str):
+        # checks if the UserId retrieved from the database is null, as a null value means that there is no record in that database with that username.
         retrievedUsername = self.cur.execute(
-            """SELECT userId FROM USERS WHERE Username=?""", (username,)).fetchone()
+            """SELECT UserId FROM USERS WHERE Username=?""", (username,)).fetchone()
         if retrievedUsername == None:
             return True
         else:
@@ -248,11 +274,13 @@ class Database:
         return self.cur.execute("""SELECT * FROM USERS WHERE UserId=?""", (userId,)).fetchone()
 
     def get_users(self, conditions: UserConditions, page: int):
+        # i am using my user conditions class and checking if its the default value to either the rows with any value (checking if it is not equal to a value that is not in the database)...
+        # ...or to select a value from the database with the value inputted by a user.
         users = self.cur.execute(f"""SELECT * FROM USERS WHERE
             {"SchoolYear=?"if not int(conditions.schoolYear) == -1 else "SchoolYear!=?"} AND
             {"FirstName=?"if not conditions.firstName == "" else "FirstName!=?"} AND
             {"LastName=?"if not conditions.lastName == "" else "LastName!=?"} AND
-            {"Username=?"if not conditions.username == "" else "Username!=?"} AND 
+            {"Username=?"if not conditions.username == "" else "Username!=?"} AND
             {"UserId=?"if not conditions.userId == -1 else "UserId!=?"}
             LIMIT 30 OFFSET {30*(page-1)}""",
             (int(conditions.schoolYear), conditions.firstName, conditions.lastName, conditions.username, conditions.userId)).fetchall()
@@ -286,5 +314,6 @@ class Database:
         self.con.commit
 
     def get_hold_requests(self):
-        #wrote a full outer join ol holds, books, and users, to get the username where the userid is equal to that in the hold request, and the same for books/bookid
+        # wrote a full outer join ol holds, books, and users, to get the username where the userid is equal to that in the hold request, and the same for books/bookid
+        # decided to remove that, and instead have the front end just use the /api/get_book/ and /api/get_user/ route to find the book or user with that specific id.
         return self.cur.execute("""SELECT * FROM HOLDS WHERE Status=1""").fetchall()
