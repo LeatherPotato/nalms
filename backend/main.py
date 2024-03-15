@@ -172,6 +172,7 @@ def send_notification():
         data = request.json
         db.create_notification(
             userId=data['userId'], notificationContent=data['notificationContent'], notificationType=data['notificationType'])
+        return json.dumps("NOTIFICATION SENT")
         # else statement only returns of data is not JSON as i need to get the userId
     else:
         return json.dumps("ERR Content type is not supported."), 418

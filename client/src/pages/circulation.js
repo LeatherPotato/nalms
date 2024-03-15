@@ -308,10 +308,43 @@ const Lates = () => {
 
 const HoldRequestElement = (props) => {
   const { userId, bookId } = props;
+  let book = {};
+
+  const handleNotify = () => {
+    let GetBookRequestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        bookId: userId,
+      }),
+    };
+    fetch(GLOBALS.serverURL.concat("/get_book/"), GetBookRequestOptions)
+      .then((response) => response.json())
+      .then((data) => book=data[0])
+      .then(() => {
+        let notificationContent = "The book BOOK_TITLE that you had a hold request on is now avaialble.".replace("BOOK_TITLE", book['Title'])
+        let SendNotificationRequestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: userId,
+            notificationContent: notificationContent,
+            notificationType: 0,
+          }),
+        };
+        fetch(GLOBALS.serverURL.concat("/send_notification/"), SendNotificationRequestOptions)
+          .then((response) => response.json())
+          .then((data) => alert(data))
+        .catch((err) => alert(err))
+      }
+      )
+      .catch((err) => alert(err));
+  }
+
   return (
     <div>
       <p>
-        Requested By: {userId}, Book Id: {bookId}
+        Requested By: {userId}, Book Id: {bookId}, <span class="material-symbols-outlined iconButton" onClick={handleNotify}> mail </span>
       </p>
     </div>
   );

@@ -54,56 +54,140 @@ const Preferences = () => {
 };
 
 const NotificationElement = (props) => {
-  const {
+  let {
     notificationContent,
     notificationDate,
     notificationType,
     notificationRead,
+    notificationId,
   } = props;
   let notificationReadClass =
-    notificationRead == 0
-      ? "NotificationElementRead"
-      : "notificationElementUnread";
+    notificationRead === 0
+      ? "NotificationElementUnread"
+      : "NotificationElementRead";
+  // adds a Read or Unread class to the data so that the notifications have a visual indicator of whether or not they are read
+
+  const readNotification = () => {
+    // sends read notification request to the server, with the notificationId
+    const NotificationReadRequestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        notificationId: notificationId,
+      }),
+    };
+    fetch(
+      GLOBALS.serverURL.concat("/read_notification/"),
+      NotificationReadRequestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => alert(data))
+      .then(notificationRead=1)
+      // sets notificationRead to true so that it updates in the UI
+      .catch((err) => alert(err));
+  };
+
+  let NotificationTypeName = "";
+
+  //   selecting the notificationTypeName with the notificationType integer
+  // so that i can display that string instead of showing the user a "meaningless" integer
+  switch (notificationType) {
+    case 0:
+      NotificationTypeName = "Hold Request Accepted";
+      break;
+    case 1:
+      NotificationTypeName = "Currently Borrowed Book Is Late!";
+      break;
+    default:
+      NotificationTypeName = "Notification Type Unknown";
+  }
   return (
     <div className={"NotificationElement ".concat(notificationReadClass)}>
-      <h6>
-        {notificationDate} : {notificationType}
-      </h6>
+      <h4 className="NotificationTitle">
+        {NotificationTypeName}{" "}
+        <span
+          class="material-symbols-outlined iconButton"
+          onClick={readNotification}
+        >
+          mark_email_read
+        </span>
+      </h4>
       <p>{notificationContent}</p>
+      <i>Sent At {notificationDate}</i>
     </div>
   );
 };
 
-const Notifications = () => {
-  // const [notifications, setNofications] = useState({});
-  // const NotificationsRequestOptions = {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({
-  //     userId: Cookies.get("USER_ID"),
-  //   }),
-  // };
-  // useEffect(() => {
-  //   fetch(GLOBALS.serverURL.concat("/get_notifications/"), NotificationsRequestOptions)
-  //     .then((response) => response.json())
-  //     .then((data) => setNofications(data))
-  //     .catch((err) => alert(err));
-  // }, []);
-  // console.log(notifications);
+class Notifications extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      notifications: [],
+      notificationElements: [],
+      displayNotifications: false,
+    };
+  }
+
+  getNoficiations = () => {
+    const NotificationsRequestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: Cookies.get("USER_ID"),
+      }),
+    };
+    fetch(
+      GLOBALS.serverURL.concat("/get_notifications/"),
+      NotificationsRequestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // after retrieving the data, i loop through it and make a list of the NotificationElement elements
+        console.log(data);
+        this.setState({ notifications: data });
+        let currentNotificationElements = [];
+        for (let index = 0; index < data.length; index++) {
+          const notification = data[index];
+          // console.log(index, notification)
+          currentNotificationElements.push(
+            <NotificationElement
+              notificationContent={notification["NotifcationContent"]}
+              notificationDate={notification["NotificationDate"]}
+              notificationType={notification["NotificationType"]}
+              notificationRead={notification["NotificationRead"]}
+              notificationId={notification["NotificationId"]}
+            />
+          );
+        }
+        this.setState({ notificationElements: currentNotificationElements });
+      })
+      .then(this.setState({ displayNotifications: true }))
+      // i set this to true after setting notificationElements, so that they can be displayed in the ui
+      .catch((err) => alert(err));
+    console.log(this.state.notifications, this.state.displayNotifications);
+  };
+
   // TODO: RENDER WHEN YOU HAVE CREATED SOME NOTIFICATIONS.
-  return (
-    <div id="accountNotificationsElement">
-      <h1>Notifications</h1>
-      <p>
-        TODO: RENDER NOTIFICATIONS WHEN YOU HAVE CREATED SOME NOTIFICATIONS.
-      </p>
-      <p>
-        WRITE THIS AFTER YOU HAVE CREATED YOUR LATES ELEMENT, AS THAT IS WHAT
-        NOTIFICATIONS ARE FOR
-      </p>
-    </div>
-  );
-};
+  // TODO-COMPLETE
+  render() {
+    return (
+      <div id="accountNotificationsElement">
+        <h1>Notifications</h1>
+        {/* only displays notiications after the otificationget button has been clicked, otherwise it shows the getnotifications button */}
+        {this.state.displayNotifications === true ? (
+          <div>
+            <h3>Retrieved</h3>
+            {this.state.notificationElements}
+          </div>
+        ) : (
+          <form onSubmit={this.getNoficiations}>
+          <button name="submitButton">Get Notifications</button>
+        </form>
+        )}
+      </div>
+    );
+  }
+}
 
 const BorrowingHistory = () => {
   // TODO: WRITE DATABASE FUNCTIONS FOR THIS IF YOU HAVE THE TIME.

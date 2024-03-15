@@ -290,7 +290,7 @@ class Database:
         # bookDataCmd = f"INSERT INTO BOOK_DATA (BookDataId, ISBN, Title, AuthorId, GenreId, PublicationDate, PublisherId, Description, CoverImage) VALUES ({Book.isbn,Book.title,Book.author_id,Book.genre_id,Book.publication_date,Book.publisher_id,Book.description,Book.cover_image}) RETURNING (BookDataId)"
         time = self.datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
         # time string code taken from https://stackoverflow.com/questions/3316882/how-do-i-get-a-string-format-of-the-current-date-time-in-python
-        notificationId = self.cur.execute("""INSERT INTO NOTIFICATIONS (UserId, NotificationCntent, NotificationDate, MotificationType, NotificationRead) 
+        notificationId = self.cur.execute("""INSERT INTO NOTIFICATIONS (NotificationId, UserId, NotifcationContent, NotificationDate, NotificationType, NotificationRead) 
             VALUES (?, ?, ?, ?, ?) RETURNING (NotificationId)""", (userId, notificationContent, time, notificationType, 0)).fetchone()
         self.con.commit()
         return notificationId
