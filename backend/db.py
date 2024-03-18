@@ -217,18 +217,11 @@ class Database:
         return publishers
 
     def create_user(self, user: User):
-        # check username and email is unique
-        retrievedUsername = self.cur.execute(
-            """SELECT userId FROM USERS WHERE Email=?""", (user.email,)).fetchone()
-        retrievedEmail = self.cur.execute(
-            """SELECT userId FROM USERS WHERE Username=?""", (user.username,)).fetchone()
-        if retrievedUsername == None and retrievedEmail == None:
-            userId = self.cur.execute("""INSERT OR IGNORE INTO USERS (Username, Schoolyear, FirstName, LastName, Password, Permissions, email) 
-                                      VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING UserId""", (user.username, user.schoolYear, user.firstName, user.lastName, user.password, user.permissions, user.email)).fetchone()
-            self.con.commit()
-            return userId
-        else:
-            return "EMAIL/USERNAME TAKEN"
+        userId = self.cur.execute("""INSERT OR IGNORE INTO USERS (Username, Schoolyear, FirstName, LastName, Password, Permissions, email) 
+                                    VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING UserId""", (user.username, user.schoolYear, user.firstName, user.lastName, user.password, user.permissions, user.email)).fetchone()
+        self.con.commit()
+        return userId['UserId']
+
 
     def edit_user(self, user: User, userId: int):
         self.cur.execute("""UPDATE USERS SET Schoolyear=?, FirstName=?, LastName=? WHERE UserId=?""",

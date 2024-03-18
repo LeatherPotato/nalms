@@ -3,7 +3,7 @@ import re
 def validate_password(password):
     # USED CHEATSHEET FROM https://pythex.org/
     # password must contain the following: 1 number, 1 upper case character, be fully alpha-numeric (removed special characters for easier security filtering.)
-    pattern = re.compile(r"^(?=.{7,15}$)(?=.*[A-Z])(?=.*[a-z])(?=.*\d)")
+    pattern = re.compile(r"^(?=.{8,}$)(?=.*[A-Z])(?=.*[a-z])(?=.*\d)")
     return not pattern.match(password) == None
 
 def validate_email(email):
@@ -13,5 +13,5 @@ def validate_email(email):
     return not pattern.match(email) == None
 
 def validate_username(username):
-    pattern = re.compile(r"[a-z0-9]+")
+    pattern = re.compile(r"^[a-z_]+$")
     return not pattern.match(username) == None

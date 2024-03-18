@@ -24,6 +24,6 @@ def convert_isbn(inputISBN):
     else:
         return None
 
-def hash_password(password):
+def hash_password(password : str):
     hashedPassword = hashlib.md5(password.encode()).hexdigest()
     return hashedPassword

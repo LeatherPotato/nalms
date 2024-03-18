@@ -199,6 +199,7 @@ main {
     background-color: var(--secondary);
     max-width: 400px;
     margin: auto;
+    justify-content: center;
 }
 
 .form div {
@@ -207,6 +208,13 @@ main {
     margin: 0.5rem;
     padding: 0.5rem;
 }
+
+.form ul {
+    margin: auto;
+    list-style:none;
+}
+
+
 
 form * {
     padding-left: 0.2rem;
@@ -433,4 +441,20 @@ footer * {
 .NotificationTitle {
     display:flex;
     justify-content: space-between;
+}
+
+.dashboardChart {
+    background-color: var(--background);
+}
+
+.importantNotice {
+    color: var(--accent) !important;
+}
+
+.validationTrue {
+    color:rgb(0, 184, 71) !important;
+}
+
+.validationFalse {
+    color:rgb(208, 0, 0) !important;
 }

@@ -647,7 +647,7 @@ class Circulation extends React.Component {
     return (
       <div id="page">
         <BookSearchElementWithGenres />
-        <h1>Search For Desired User</h1>
+        <h2>Search For Desired User</h2>
         <UserSearchElement />
         <Borrowing />
         <Lates />

@@ -51,13 +51,18 @@ def create_user():
     if request.is_json:
         data = request.json
         if db.check_user_permissions(userId=data['senderUserId'], action=8):
+            print("HAS PERMISSIONS")
             # checks if user has the 1000 permission enabled (admin)
-            if validation.validate_email(data['email']) and validation.validate_password(data['password']) and validation.validate_username(data['username']):
+            print(data)
+            print(validation.validate_email(data['email']), validation.validate_password(data['password']), validation.validate_username(data['username']))
+            if validation.validate_email(data['email'])==True and validation.validate_password(data['password'])==True and validation.validate_username(data['username'])==True:
+                print("VALIDATED")
                 # validates input data
                 if db.check_username_available(data['username']):
+                    print("USERNAME NOT TAKEN")
                     #checks if username is available
-                    hashedPassword = conversions.hash_password(
-                        input_password=data['password'])
+                    print(data['password'])
+                    hashedPassword = conversions.hash_password(password=data['password'])
                     user = custom_classes.User(input_fname=data['fisrtName'],
                                                input_lname=data['lastName'],
                                                input_password=hashedPassword,
@@ -66,7 +71,9 @@ def create_user():
                                                perms=data['userPerms'],
                                                email=data['email']
                                                )
+                    print(user.__dict__)
                     userId = db.create_user(user)
+                    print(userId)
                     return json.dumps(userId)
                 # all of these else statements the error that caused their request to not be handled
                 else:
