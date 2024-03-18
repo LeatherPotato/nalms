@@ -107,10 +107,10 @@ def change_password():
 def change_username():
     if request.is_json:
         data = request.json
-        if db.check_user_permissions(userId=data['senderUserId'], action=8) or data['senderUserID'] == data['userId']:
+        if db.check_user_permissions(userId=data['senderUserId'], action=8) or data['senderUserId'] == data['userId']:
             if db.check_username_available(data['username']):
                 db.update_username(
-                    newUsername=data['username'], userId=data['senderUserId'])
+                    newUsername=data['username'], userId=data['userId'])
                 return json.dumps("SUCCESS Username Changed")
                 # else statements return specified error below
             else:

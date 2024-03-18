@@ -5,6 +5,8 @@ import UserSearchElement from "../components/users_search";
 import Cookies from "js-cookie";
 import GLOBALS from "../Global";
 
+import UserElement from "../components/user_element";
+
 const isAlphabetic = (input) => {
   // https://stackoverflow.com/a/336220
   // used this stackoverflow thread to get the regex for only alphanumeric and underscores
@@ -214,9 +216,9 @@ class CreateUser extends React.Component {
             <ul>
               <li
                 className={
-                  this.state.firstNameValid
+                  "formValidation ".concat(this.state.firstNameValid
                     ? "validationTrue"
-                    : "validationFalse"
+                    : "validationFalse")
                 }
               >
                 Alphabetic
@@ -233,9 +235,9 @@ class CreateUser extends React.Component {
             <ul>
               <li
                 className={
-                  this.state.lastNameValid
+                  "formValidation ".concat(this.state.lastNameValid
                     ? "validationTrue"
-                    : "validationFalse"
+                    : "validationFalse")
                 }
               >
                 Alphabetic
@@ -252,9 +254,9 @@ class CreateUser extends React.Component {
             <ul>
               <li
                 className={
-                  this.state.usernameValid
+                  "formValidation ".concat(this.state.usernameValid
                     ? "validationTrue"
-                    : "validationFalse"
+                    : "validationFalse")
                 }
               >
                 Valid Username
@@ -271,36 +273,36 @@ class CreateUser extends React.Component {
             <ul>
               <li
                 className={
-                  this.state.passwordDigitValid
+                  "formValidation ".concat(this.state.passwordDigitValid
                     ? "validationTrue"
-                    : "validationFalse"
+                    : "validationFalse")
                 }
               >
                 Contains Digit
               </li>
               <li
                 className={
-                  this.state.passwordLengthValid
+                  "formValidation ".concat(this.state.passwordLengthValid
                     ? "validationTrue"
-                    : "validationFalse"
+                    : "validationFalse")
                 }
               >
                 8+ Characters Long
               </li>
               <li
                 className={
-                  this.state.passwordUppercaseValid
+                  "formValidation ".concat(this.state.passwordUppercaseValid
                     ? "validationTrue"
-                    : "validationFalse"
+                    : "validationFalse")
                 }
               >
                 Contains Uppercase
               </li>
               <li
                 className={
-                  this.state.passwordLowercaseValid
+                  "formValidation ".concat(this.state.passwordLowercaseValid
                     ? "validationTrue"
-                    : "validationFalse"
+                    : "validationFalse")
                 }
               >
                 Contains Lowercase
@@ -317,7 +319,7 @@ class CreateUser extends React.Component {
             <ul>
               <li
                 className={
-                  this.state.emailValid ? "validationTrue" : "validationFalse"
+                  "formValidation ".concat(this.state.emailValid ? "validationTrue" : "validationFalse")
                 }
               >
                 Valid Email
@@ -358,11 +360,45 @@ class CreateUser extends React.Component {
 class ChangeUserPassword extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      password: "",
+      passwordDigitValid: false,
+      passwordUppercaseValid: false,
+      passwordLowercaseValid: false,
+      passwordLengthValid: false,
+      userId: -1,
+      retrievedUser: {},
+    };
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
+    // i am validating all of my inputs to ensure that the user is sending in the correct/required data
+    let validPassword =
+      this.state.passwordDigitValid &&
+      this.state.passwordLengthValid &&
+      this.state.passwordLowercaseValid &&
+      this.state.passwordUppercaseValid;
+    if (this.state.userId==="" || validPassword===false) {
+      alert("invalid inputs")
+    }
+    else {
+      let ChangePasswordRequestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderUserId: Cookies.get("USER_ID"),
+          userId: this.state.userId,
+          password: this.state.password
+        }),
+      };
+      fetch(GLOBALS.serverURL.concat("/change_password/"), ChangePasswordRequestOptions)
+        .then((response) => response.json())
+        .then((data) => alert(data))
+        .catch((err) => {
+          alert(err)
+        });
+    }
     // add validation to ensure that a request with wjmpoty data is not sent
   };
 
@@ -370,6 +406,49 @@ class ChangeUserPassword extends React.Component {
     e.preventDefault();
     const { name, value } = e.target;
     this.setState({ [name]: value });
+    switch (name) {
+      case "password":
+        // for this block, i will be checking each of the individual conditions i have in my state, and set them accordingly
+        // it will only change the value to true or false if it is the opposite of what it should be
+        if (containsDigit(value) !== this.state.passwordDigitValid) {
+          this.setState({ passwordDigitValid: containsDigit(value) });
+        }
+        if (containsUppercase(value) !== this.state.passwordUppercaseValid) {
+          this.setState({ passwordUppercaseValid: containsUppercase(value) });
+        }
+        if (conntainsLowercase(value) !== this.state.passwordLowercaseValid) {
+          this.setState({ passwordLowercaseValid: conntainsLowercase(value) });
+        }
+        if (isValidLength(value) !== this.state.passwordLengthValid) {
+          this.setState({ passwordLengthValid: isValidLength(value) });
+        }
+        break;
+      case "userId":
+        if (value=="") {
+          this.setState({userId:-1})
+        } else {
+          this.setState({userId: value})
+          let GetUserRequestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: value,
+            }),
+          };
+          fetch(GLOBALS.serverURL.concat("/get_user/"), GetUserRequestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+              this.setState({ retrievedUser: data });
+            })
+            .catch((err) => {
+              this.setState({ borrowUser: {} });
+              alert(err)
+            });
+        }
+        break;
+      default:
+        console.log("")
+    }
     console.log(name, value);
     // add that validation thing where its -1 if its empoty
   };
@@ -377,23 +456,117 @@ class ChangeUserPassword extends React.Component {
   render() {
     return (
       <div>
-        <forn onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit}>
           this is a form
-          {/* add validation to ensure that the date entered is correct (show the user if it is wrong) */}
-        </forn>
+          <div className="formInput">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              onChange={this.handleChanges}
+            ></input>
+            <ul>
+              <li
+                className={
+                  "formValidation ".concat(this.state.passwordDigitValid
+                    ? "validationTrue"
+                    : "validationFalse")
+                }
+              >
+                Contains Digit
+              </li>
+              <li
+                className={
+                  "formValidation ".concat(this.state.passwordLengthValid
+                    ? "validationTrue"
+                    : "validationFalse")
+                }
+              >
+                8+ Characters Long
+              </li>
+              <li
+                className={
+                  "formValidation ".concat(this.state.passwordUppercaseValid
+                    ? "validationTrue"
+                    : "validationFalse")
+                }
+              >
+                Contains Uppercase
+              </li>
+              <li
+                className={
+                  "formValidation ".concat(this.state.passwordLowercaseValid
+                    ? "validationTrue"
+                    : "validationFalse")
+                }
+              >
+                Contains Lowercase
+              </li>
+            </ul>
+          </div>
+          <div class="formInput">
+            <input
+                type="text"
+                name="userId"
+                placeholder="User Id"
+                onChange={this.handleChanges}
+              ></input>
+          </div>
+          <button name="submitButton">Change Username</button>
+        </form>
+        {this.state.borrowUserId !== "" ? (
+          // this displays the user if it has been retrieved, otherwise, it wont display anything since the user is still its initial value (an empty object {})
+          <UserElement
+            userId={this.state.retrievedUser["UserId"]}
+            username={this.state.retrievedUser["Username"]}
+            schoolYear={this.state.retrievedUser["Schoolyear"]}
+            firstName={this.state.retrievedUser["FirstName"]}
+            lastName={this.state.retrievedUser["LastName"]}
+            permissions={this.state.retrievedUser["Permission"]}
+            email={this.state.retrievedUser["Email"]}
+          />
+        ) : (
+          ""
+        )}
       </div>
     );
   }
 }
 
+
 class ChangeUserUsername extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      username: "",
+      usernameValid: false,
+      userId: -1,
+      retrievedUser: {},
+    };
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
+    if (this.state.userId==="" || this.state.usernameValid===false) {
+      alert("invalid inputs")
+    }
+    else {
+      let ChangeUsernameRequestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderUserId: Cookies.get("USER_ID"),
+          userId: this.state.userId,
+          username: this.state.username,
+        }),
+      };
+      fetch(GLOBALS.serverURL.concat("/change_username/"), ChangeUsernameRequestOptions)
+        .then((response) => response.json())
+        .then((data) => alert(data))
+        .catch((err) => {
+          alert(err)
+        });
+    }
     // add validation to ensure that a request with wjmpoty data is not sent
   };
 
@@ -401,6 +574,38 @@ class ChangeUserUsername extends React.Component {
     e.preventDefault();
     const { name, value } = e.target;
     this.setState({ [name]: value });
+    switch (name) {
+      case "username":
+        if (isvalidUsername(value) !== this.state.usernameValid) {
+          this.setState({ usernameValid: isvalidUsername(value) });
+        }
+        break;
+      case "userId":
+        if (value=="") {
+          this.setState({userId:-1})
+        } else {
+          this.setState({userId: value})
+          let GetUserRequestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: value,
+            }),
+          };
+          fetch(GLOBALS.serverURL.concat("/get_user/"), GetUserRequestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+              this.setState({ retrievedUser: data });
+            })
+            .catch((err) => {
+              this.setState({ borrowUser: {} });
+              alert(err)
+            });
+        }
+        break;
+      default:
+        console.log("")
+    }
     console.log(name, value);
     // add that validation thing where its -1 if its empoty
   };
@@ -408,10 +613,51 @@ class ChangeUserUsername extends React.Component {
   render() {
     return (
       <div>
-        <forn onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit}>
           this is a form
-          {/* add validation to ensure that the date entered is correct (show the user if it is wrong) */}
-        </forn>
+          <div className="formInput">
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              onChange={this.handleChanges}
+            ></input>
+            <ul>
+              <li
+                className={
+                  "formValidation ".concat(this.state.usernameValid
+                    ? "validationTrue"
+                    : "validationFalse")
+                }
+              >
+                Valid Username
+              </li>
+            </ul>
+          </div>
+          <div class="formInput">
+            <input
+                type="text"
+                name="userId"
+                placeholder="User Id"
+                onChange={this.handleChanges}
+              ></input>
+          </div>
+          <button name="submitButton">Change Username</button>
+        </form>
+        {this.state.borrowUserId !== "" ? (
+          // this displays the user if it has been retrieved, otherwise, it wont display anything since the user is still its initial value (an empty object {})
+          <UserElement
+            userId={this.state.retrievedUser["UserId"]}
+            username={this.state.retrievedUser["Username"]}
+            schoolYear={this.state.retrievedUser["Schoolyear"]}
+            firstName={this.state.retrievedUser["FirstName"]}
+            lastName={this.state.retrievedUser["LastName"]}
+            permissions={this.state.retrievedUser["Permission"]}
+            email={this.state.retrievedUser["Email"]}
+          />
+        ) : (
+          ""
+        )}
       </div>
     );
   }

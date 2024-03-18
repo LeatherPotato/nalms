@@ -241,15 +241,10 @@ class Database:
 
     def update_username(self, newUsername, userId):
         # checks if username is unique before editing it
-        retrievedUsername = self.cur.execute(
-            """SELECT userId FROM USERS WHERE Username=?""", (newUsername,)).fetchone()
-        if retrievedUsername == None:
-            self.cur.execute(
-                """UPDATE USERS SET Username=? WHERE UserId=?""", (newUsername, userId))
-            self.con.commit()
-            return "DONE"
-        else:
-            return "USERNAME_TAKEN"
+        self.cur.execute(
+            """UPDATE USERS SET Username=? WHERE UserId=?""", (newUsername, userId))
+        self.con.commit()
+        return "DONE"
 
     def check_username_available(self, username: str):
         # checks if the UserId retrieved from the database is null, as a null value means that there is no record in that database with that username.

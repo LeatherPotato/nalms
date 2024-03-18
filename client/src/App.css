@@ -458,3 +458,8 @@ footer * {
 .validationFalse {
     color:rgb(208, 0, 0) !important;
 }
+
+.formValidation {
+    margin: auto;
+    list-style:none;
+}
